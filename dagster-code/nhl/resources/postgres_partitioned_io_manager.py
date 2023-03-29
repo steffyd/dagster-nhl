@@ -30,7 +30,9 @@ class PostgresPartitionedIOManager(IOManager):
 
             # Insert the new data for the partition key
             df["partition_key"] = partition_key
-            df.to_sql(table_name, connection, schema_name, if_exists="append", index=False)
+            df.to_sql(
+                table_name, connection, schema_name, if_exists="append", index=False
+            )
 
     def load_input(self, context) -> pd.DataFrame:
         partition_key = self._get_partition_key(context)
@@ -45,8 +47,10 @@ class PostgresPartitionedIOManager(IOManager):
             df = pd.read_sql(select_sql, connection)
             return df
 
-@io_manager(required_resource_keys={"postgres_resource_by_db"},
-            description="partitioned postgres IO manager, configurable database, table and schema via output metadata"
+
+@io_manager(
+    required_resource_keys={"postgres_resource_by_db"},
+    description="partitioned postgres IO manager, configurable database, table and schema via output metadata",
 )
 def postgres_partitioned_io_manager():
     return PostgresPartitionedIOManager()

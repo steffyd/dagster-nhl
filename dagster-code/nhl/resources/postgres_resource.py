@@ -8,7 +8,10 @@ database_url = (
     "postgresql://{username}:{password}@{host}:{port}/{database}?sslmode=require"
 )
 
-@resource(description="configured postgres connection via env vars, with a configurable database set on execution")
+
+@resource(
+    description="configured postgres connection via env vars, with a configurable database set on execution"
+)
 def postgres_resource_by_db():
     @contextmanager
     def get_postgres_connection(database):
@@ -24,6 +27,6 @@ def postgres_resource_by_db():
         try:
             yield postgres_conn
         finally:
-            pass# dunno clean up some shit I guess
-    
+            pass  # dunno clean up some shit I guess
+
     return get_postgres_connection

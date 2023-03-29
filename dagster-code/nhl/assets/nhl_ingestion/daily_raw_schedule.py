@@ -1,12 +1,6 @@
 import datetime as dt
 import pandas as pd
-from dagster import (
-    graph,
-    op,
-    Out,
-    AssetsDefinition,
-    Output
-)
+from dagster import graph, op, Out, AssetsDefinition, Output
 from utils.nhl_api import get_schedule_expanded
 from assets.partitions import nhl_future_week_daily_partition
 
@@ -29,11 +23,12 @@ def daily_schedule_expanded(context):
     schedule = get_schedule_expanded(date, context)
     return Output(schedule, metadata={"num_games": schedule.shape[0]})
 
+
 @graph
 def raw_schedule_data():
     return daily_schedule_expanded()
 
+
 raw_schedule_asset = AssetsDefinition.from_graph(
-    raw_schedule_data,
-    partitions_def=nhl_future_week_daily_partition
+    raw_schedule_data, partitions_def=nhl_future_week_daily_partition
 )

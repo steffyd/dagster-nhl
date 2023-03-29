@@ -1,13 +1,11 @@
 from dagster import Definitions, multiprocess_executor
-from assets import (nhl_ingestion_assets)
+from assets import nhl_ingestion_assets
 from schedules import SCHEDULES
 from jobs import JOBS
 from resources import RESOURCES
 from sensors import SENSORS
 
-all_assets = [
-    *nhl_ingestion_assets
-]
+all_assets = [*nhl_ingestion_assets]
 
 
 defs = Definitions(
