@@ -33,14 +33,14 @@ def nhl_schedule_daily_partitioned_config(start: datetime, _end: datetime):
 
 daily_nhl_games_job = define_asset_job(
     "daily_nhl_games_job",
-    AssetSelection.keys("raw_game_data"),
+    AssetSelection.keys("nhl_ingestion/raw_game_data"),
     partitions_def=nhl_daily_partition,
     config=nhl_daily_partitioned_config,
 )
 
 daily_nhl_schedule_job = define_asset_job(
     "daily_nhl_schedule_job",
-    AssetSelection.keys("raw_schedule_data"),
+    AssetSelection.keys("nhl_ingestion/raw_schedule_data"),
     partitions_def=nhl_future_week_daily_partition,
     config=nhl_schedule_daily_partitioned_config,
 )
