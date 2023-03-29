@@ -6,6 +6,6 @@ sources:
     schema: raw
     tables:
       - name: game_data
-        identifier: game_data
+        identifier: raw_game_data
       - name: schedule_data
-        identifier: schedule_data
+        identifier: raw_schedule_data
