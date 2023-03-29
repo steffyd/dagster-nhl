@@ -1,3 +1,4 @@
+version: 2
 models:
   - name: game_outcomes
     description: "The outcome of a game based on the number of goals scored, including ties"
