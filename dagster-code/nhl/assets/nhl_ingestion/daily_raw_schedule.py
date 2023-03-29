@@ -30,5 +30,7 @@ def raw_schedule_data():
 
 
 raw_schedule_asset = AssetsDefinition.from_graph(
-    raw_schedule_data, partitions_def=nhl_future_week_daily_partition
+    raw_schedule_data,
+    partitions_def=nhl_future_week_daily_partition,
+    key_prefix="nhl_ingestion",
 )

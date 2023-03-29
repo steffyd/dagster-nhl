@@ -76,4 +76,5 @@ graph_asset = AssetsDefinition.from_graph(
     raw_game_data,
     partitions_def=nhl_daily_partition,
     resource_defs={"slack": coc_slack_resource},
+    key_prefix="nhl_ingestion",
 )
