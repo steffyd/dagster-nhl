@@ -1,0 +1,239 @@
+version: "3.7"
+
+services:
+  # This service runs the postgres DB used by dagster for run storage, schedule storage,
+  # and event log storage.
+  dagster_psql:
+    image: postgres:11
+    environment:
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+      POSTGRES_DB:
+    
+    networks:
+      - dagster
+
+    volumes:
+      - /home/dagster-psql:/var/lib/postgresql/data
+
+    deploy:
+      replicas: 1
+
+      restart_policy:
+        condition: on-failure
+        delay: 3s
+        max_attempts: 5
+        window: 10s
+
+      update_config:
+        parallelism: 1
+        order: stop-first
+        delay: 5s
+        failure_action: rollback
+        monitor: 30s
+
+      rollback_config:
+        parallelism: 1
+        order: stop-first
+        delay: 0s
+        failure_action: pause
+        monitor: 5s
+
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+
+  dagit:
+    image: steffyd/dagster_dagit:latest
+    environment:
+      POSTGRES_HOST: "dagster_dagster_psql_1"
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+      POSTGRES_DB:
+      DB_USER:
+      DB_PASSWORD:
+      DB_HOST:
+      DB_PORT:
+
+    volumes: # Make docker client accessible so we can terminate containers from dagit
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/dagster/dagster.yaml:/opt/dagster/dagster_home/dagster.yaml
+      - /home/dagster/workspace.yaml:/opt/dagster/dagster_home/workspace.yaml
+      #- /tmp/io_manager_storage:/tmp/io_manager_storage
+
+    networks:
+      - home_default
+      - dagster
+
+    depends_on:
+      - dagster_psql
+      - dagster_code
+
+    labels:
+      # traefikv2
+      - "traefik.enable=true"
+      - "traefik.http.routers.airflow.tls=true"
+      - "traefik.http.routers.airflow.rule=Host(`dagster.corellianengineeringco.com`)"
+      - "traefik.http.routers.airflow.tls.certresolver=le"
+      - "traefik.http.routers.airflow.entrypoints=websecure"
+      - "traefik.http.services.airflow.loadbalancer.server.port=3000"
+
+    deploy:
+      replicas: 1
+
+      restart_policy:
+        condition: on-failure
+        delay: 3s
+        max_attempts: 5
+        window: 10s
+
+      update_config:
+        parallelism: 1
+        order: stop-first
+        delay: 5s
+        failure_action: rollback
+        monitor: 30s
+
+      rollback_config:
+        parallelism: 1
+        order: stop-first
+        delay: 0s
+        failure_action: pause
+        monitor: 5s
+
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+
+  dagster_daemon:
+    image: steffyd/dagster_daemon:latest
+    environment:
+      POSTGRES_HOST: "dagster_dagster_psql_1"
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+      DAGSTER_CURRENT_IMAGE: "steffyd/dagster_code:latest"
+      POSTGRES_DB:
+      DB_USER:
+      DB_PASSWORD:
+      DB_HOST:
+      DB_PORT:
+      SLACK_TOKEN:
+
+    volumes: # Make docker client accessible so we can launch containers using host docker
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/dagster/dagster.yaml:/opt/dagster/dagster_home/dagster.yaml
+      - /home/dagster/workspace.yaml:/opt/dagster/dagster_home/workspace.yaml
+      #- /tmp/io_manager_storage:/tmp/io_manager_storage
+
+    networks:
+      - dagster
+
+    depends_on:
+      - dagster_psql
+      - dagster_code
+
+    deploy:
+      replicas: 1
+
+      restart_policy:
+        condition: on-failure
+        delay: 3s
+        max_attempts: 5
+        window: 10s
+
+      update_config:
+        parallelism: 1
+        order: stop-first
+        delay: 5s
+        failure_action: rollback
+        monitor: 30s
+
+      rollback_config:
+        parallelism: 1
+        order: stop-first
+        delay: 0s
+        failure_action: pause
+        monitor: 5s
+
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+
+  dagster_code:
+    image: steffyd/dagster_code:latest
+    environment:
+      DAGSTER_CURRENT_IMAGE: "steffyd/dagster_code:latest"
+      POSTGRES_HOST: "dagster_dagster_psql_1"
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+      POSTGRES_DB:
+      DB_USER:
+      DB_PASSWORD:
+      DB_HOST:
+      DB_PORT:
+      SLACK_TOKEN:
+
+    networks:
+      - dagster
+
+    volumes:
+      - /home/dagster/dagster-code/nhl/:/opt/dagster/app/
+      - /home/dagster/dagster.yaml:/opt/dagster/dagster_home/dagster.yaml
+      - /home/dagster/workspace.yaml:/opt/dagster/dagster_home/workspace.yaml
+      - dagster_asset_storage:/opt/dagster/local/
+
+    deploy:
+      replicas: 1
+
+      restart_policy:
+        condition: on-failure
+        delay: 3s
+        max_attempts: 5
+        window: 10s
+
+      update_config:
+        parallelism: 1
+        order: stop-first
+        delay: 5s
+        failure_action: rollback
+        monitor: 30s
+
+      rollback_config:
+        parallelism: 1
+        order: stop-first
+        delay: 0s
+        failure_action: pause
+        monitor: 5s
+
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+
+networks:
+  home_default:
+    name: home_default
+    external: true
+  dagster:
+    name: dagster
+    external: false
+volumes:
+  dagster_asset_storage:
+    name: dagster_asset_storage
+    external: true

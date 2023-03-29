@@ -1,0 +1,58 @@
+storage:
+  postgres:
+    postgres_db:
+      username:
+        env: POSTGRES_USER
+      password:
+        env: POSTGRES_PASSWORD
+      hostname:
+        env: POSTGRES_HOST
+      db_name:
+        env: POSTGRES_DB
+      port: 5432
+
+local_artifact_storage:
+  module: dagster.core.storage.root
+  class: LocalArtifactStorage
+  config:
+    base_dir: "/opt/dagster/local/"
+
+run_launcher:
+  module: dagster_docker
+  class: DockerRunLauncher
+  config:
+    env_vars:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+      - POSTGRES_HOST
+      - DAGSTER_CURRENT_IMAGE
+      - DB_USER
+      - DB_PASSWORD
+      - DB_HOST
+      - DB_PORT
+      - SLACK_TOKEN
+    networks:
+      - dagster
+    container_kwargs:
+      volumes:
+        - dagster_asset_storage:/opt/dagster/local/
+        - /home/dagster/dagster-code/nhl/:/opt/dagster/app
+        #- dagster_io_manager:/tmp/io_manager_storage
+        - /var/run/docker.sock:/var/run/docker.sock
+
+run_coordinator:
+  module: dagster.core.run_coordinator
+  class: QueuedRunCoordinator
+  config:
+    max_concurrent_runs: 25
+    tag_concurrency_limits:
+      - key: "database"
+        value: "sql"
+        limit: 4
+      - key: "ml"
+        value: "score"
+        limit: 10
+
+telemetry:
+  enabled: false
