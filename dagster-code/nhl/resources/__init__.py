@@ -10,8 +10,8 @@ RESOURCES = {
     "coc_slack_resource": coc_slack_resource,
     "dbt": dbt_cli_resource.configured(
         {
-            "project_dir": DBT_PROJECT_PATH,
-            "profiles_dir": DBT_PROFILES,
+            "project_dir": DBT_PROJECT_DIR,
+            "profiles_dir": DBT_PROFILES_DIR,
         },
     ),
 }
