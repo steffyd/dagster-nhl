@@ -4,12 +4,12 @@ WITH ranked_teams AS (
     team,
     goals,
     ROW_NUMBER() OVER (PARTITION BY game_id ORDER BY goals DESC) as rank
-  FROM {{source('nhl_ingestion', 'game_data')}}
+  FROM {{source('nhl_ingestion', 'raw_game_data')}}
 ),
 no_ties as (
     select gd1.game_id
-    from {{source('nhl_ingestion', 'game_data')}} gd1
-    join {{source('nhl_ingestion', 'game_data')}} gd2 on gd1.game_id = gd2.game_id
+    from {{source('nhl_ingestion', 'raw_game_data')}} gd1
+    join {{source('nhl_ingestion', 'raw_game_data')}} gd2 on gd1.game_id = gd2.game_id
     where gd1.goals <> gd2.goals
 )
 SELECT
