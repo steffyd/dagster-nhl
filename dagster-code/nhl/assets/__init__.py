@@ -10,4 +10,6 @@ nhl_ingestion_assets = load_assets_from_package_module(
     package_module=nhl_ingestion, group_name="nhl_ingestion"
 )
 
-dbt_assets = load_assets_from_dbt_project(DBT_PROJECT_DIR)
+dbt_assets = load_assets_from_dbt_project(
+    DBT_PROJECT_DIR, dbt_resource_key="postgres_resource_by_db"
+)
