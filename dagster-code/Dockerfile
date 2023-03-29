@@ -7,7 +7,7 @@ FROM python:3.10-slim
 RUN pip install \
     dagster \
     dagster-postgres \
-    dagster-airbyte \
+    dagster-dbt \
     dagster-docker \
     dagster-slack \
     sqlalchemy==1.4.46

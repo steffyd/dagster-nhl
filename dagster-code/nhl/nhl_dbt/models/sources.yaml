@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: raw_data
+    database: nhl_stats
+    schema: raw
+    tables:
+      - name: game_data
+        identifier: game_data
+      - name: schedule_data
+        identifier: schedule_data
