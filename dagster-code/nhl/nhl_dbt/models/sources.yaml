@@ -1,11 +1,11 @@
 version: 2
 
 sources:
-  - name: raw_data
+  - name: nhl_ingestion
     database: nhl_stats
     schema: raw
     tables:
-      - name: game_data
-        identifier: raw_game_data
-      - name: schedule_data
-        identifier: raw_schedule_data
+      - name: raw_game_data
+        identifier: game_data
+      - name: raw_schedule_data
+        identifier: schedule_data
