@@ -8,5 +8,6 @@ nhl_dbt:
       user: "{{ env_var('DB_USER') }}"
       pass: "{{ env_var('DB_PASSWORD') }}"
       dbname: nhl_stats
+      schema: public
 
   target: prod
