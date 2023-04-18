@@ -45,14 +45,7 @@ run_coordinator:
   module: dagster.core.run_coordinator
   class: QueuedRunCoordinator
   config:
-    max_concurrent_runs: 25
-    tag_concurrency_limits:
-      - key: "database"
-        value: "sql"
-        limit: 4
-      - key: "ml"
-        value: "score"
-        limit: 10
+    max_concurrent_runs: 5
 
 telemetry:
   enabled: false

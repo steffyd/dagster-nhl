@@ -58,10 +58,6 @@ def daily_game_stats(context, date, game_stats: list[pd.DataFrame]):
     if not game_stats:
         return Output(pd.DataFrame(), metadata={"num_rows": 0})
     days_game_stats = pd.concat(game_stats)
-    # slack_msg = f"Extracted {days_game_stats.shape[0]} game_data rows from the API for day {date}. Loading to Postgres now."
-    # context.resources.slack.chat_postMessage(
-    #     channel="#dagster-messages", text=slack_msg
-    # )
     return Output(days_game_stats, metadata={"num_rows": days_game_stats.shape[0]})
 
 
