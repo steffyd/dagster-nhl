@@ -6,13 +6,11 @@ from dagster import (
     Out,
     DynamicOut,
     DynamicOutput,
-    DailyPartitionsDefinition,
     AssetsDefinition,
     Output,
 )
 from utils.nhl_api import get_schedule, get_team_stats
 from assets.partitions import nhl_daily_partition
-from dagster_slack import slack_resource
 from resources.coc_slack_resource import coc_slack_resource
 
 
