@@ -1,11 +1,12 @@
-from dagster import load_assets_from_package_module
-from dagster_dbt import load_assets_from_dbt_project
+from dagster import load_assets_from_modules, load_assets_from_package_module
 from . import nhl_ingestion
-from utils.constants import DBT_PROJECT_DIR
+from . import dbt_assets
 
 
 nhl_ingestion_assets = load_assets_from_package_module(
     package_module=nhl_ingestion, group_name="nhl_ingestion"
 )
 
-dbt_assets = load_assets_from_dbt_project(DBT_PROJECT_DIR)
+dbt_assets = load_assets_from_modules([dbt_assets])
+
+ASSETS = [*nhl_ingestion_assets, *dbt_assets]

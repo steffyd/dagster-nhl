@@ -36,4 +36,4 @@ models:
     # Config indicated by + and applies to all files under models/clean/
     clean:
       +schema: clean
-      +materialized: table
+      +materialized: incremental
