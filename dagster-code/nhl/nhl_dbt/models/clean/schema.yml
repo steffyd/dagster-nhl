@@ -2,3 +2,5 @@ version: 2
 models:
   - name: game_outcomes
     description: "The outcome of a game based on the number of goals scored, including ties"
+  - name: games_back2back
+    description: "Determine whether or not the game is back to back for a team and whether or not the team won the previous game"

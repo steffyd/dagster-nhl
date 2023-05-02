@@ -3,6 +3,7 @@ with ranked_teams as (
     game_id,
     team,
     goals,
+    partition_key,
     row_number() over (partition by game_id order by goals desc) as rank
   from {{source('nhl_ingestion', 'raw_game_data')}}
   {% if is_incremental() %}
@@ -23,7 +24,8 @@ select
       when 1 then 'winner'
        else 'loser' end
   end as team_type,
-  rt.goals
+  rt.goals,
+  rt.partition_key
 from ranked_teams rt
 left join no_ties nt on rt.game_id = nt.game_id
 group by rt.game_id, rt.team, case when nt.game_id is null then 'tied'
