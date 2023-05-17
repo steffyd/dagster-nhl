@@ -9,4 +9,4 @@ def partition_key_to_vars(partition_key):
 dbt_assets = load_assets_from_dbt_project(DBT_PROJECT_DIR,
                                           partitions_def= nhl_daily_partition,
                                           partition_key_to_vars_fn=partition_key_to_vars,
-                                          select="game_outcomes")
+                                          select="game_data")
