@@ -1,3 +1,10 @@
+{{
+    config(
+        materialized='incremental',
+        unique_key='game_id'
+    )
+}}
+
 -- create a cte for each home and away team
 -- in the game_id for raw.game_data and flatten
 -- the data into a single row
