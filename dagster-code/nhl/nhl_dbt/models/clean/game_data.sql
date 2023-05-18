@@ -1,6 +1,7 @@
 {{
     config(
         materialized='incremental',
+        incremental_strategy='insert_overwrite',
         unique_key='game_id'
     )
 }}
