@@ -31,7 +31,7 @@ with home as (
 )
 -- join the home and away data on game_id
 -- and flatten the data into a single row
-select
+select distinct
     home.game_id as game_id,
     home.game_date as game_date,
     home.game_type as game_type,
