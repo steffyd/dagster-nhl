@@ -21,12 +21,14 @@ def get_schedule_expanded(date, context):
                     "game_id": game["gamePk"],
                     "game_date": date_data["date"],
                     "home_team": game["teams"]["home"]["team"]["name"],
+                    "home_score" : game["teams"]["home"]["score"],
                     "home_wins_date": game["teams"]["home"]["leagueRecord"]["wins"],
                     "home_losses_date": game["teams"]["home"]["leagueRecord"]["losses"],
                     "home_ties_date": game["teams"]["home"]["leagueRecord"].get(
                         "ties", 0
                     ),
                     "away_team": game["teams"]["away"]["team"]["name"],
+                    "away_score" : game["teams"]["away"]["score"],
                     "away_wins_date": game["teams"]["away"]["leagueRecord"]["wins"],
                     "away_losses_date": game["teams"]["away"]["leagueRecord"]["losses"],
                     "away_ties_date": game["teams"]["away"]["leagueRecord"].get(
