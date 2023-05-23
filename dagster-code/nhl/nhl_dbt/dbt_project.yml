@@ -37,3 +37,6 @@ models:
     clean:
       +schema: clean
       +materialized: incremental
+    morph:
+      +schema: morph
+      +materialized: incremental
