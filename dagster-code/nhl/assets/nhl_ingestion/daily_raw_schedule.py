@@ -8,7 +8,7 @@ from assets.partitions import nhl_future_week_daily_partition
 
 @asset(
         io_manager_key="warehouse_io_manager",
-        partitions=nhl_future_week_daily_partition,
+        partitions_def=nhl_future_week_daily_partition,
         compute_kind="api",
         metadata={"partition_expr": "TIMESTAMP_SECONDS(game_date)"},
         key_prefix="nhl_ingestion"
