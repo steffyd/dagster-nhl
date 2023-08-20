@@ -24,6 +24,6 @@ daily_nhl_games_job = define_asset_job(
 
 nhl_schedule_job = define_asset_job(
     name="nhl_schedule_job",
-    selection=AssetSelection.keys("nhl_ingestion/schedule_raw"),
+    selection=AssetSelection.keys("schedule_raw"),
     partitions_def=nhl_future_week_daily_partition
 )
