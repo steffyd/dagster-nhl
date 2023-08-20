@@ -17,7 +17,7 @@ def get_schedule_expanded(date, context):
             schedule.append(
                 {
                     "game_id": game["gamePk"],
-                    "game_date": date_data["date"],
+                    "game_date": pd.to_datetime(date_data["date"]),
                     "home_team": game["teams"]["home"]["team"]["name"],
                     "home_score" : game["teams"]["home"]["score"],
                     "home_wins_date": game["teams"]["home"]["leagueRecord"]["wins"],
