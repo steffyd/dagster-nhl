@@ -10,6 +10,7 @@ RUN pip install \
     dagster-dbt \
     dagster-docker \
     dagster-slack \
+    dagster-bigquery \
     sqlalchemy==1.4.46
 
 RUN pip install \

@@ -1,36 +1,25 @@
-import datetime as dt
+from dagster import asset, Output
 import pandas as pd
-from dagster import graph, op, Out, AssetsDefinition, Output
+from datetime import timedelta
 from utils.nhl_api import get_schedule_expanded
+from utils.utils import get_partition_time_range
 from assets.partitions import nhl_future_week_daily_partition
 
 
-@op(
-    out=Out(
-        io_manager_key="postgres_partitioned_io_manager",
-        metadata={
-            "database": "nhl_stats",
-            "schema_name": "raw",
-            "table_name": "schedule_data",
-        },
-    ),
-    config_schema={
-        "date": str,
-    },
+@asset(
+        io_manager_key="warehouse_io_manager",
+        partitions=nhl_future_week_daily_partition,
+        compute_kind="api",
+        metadata={"partition_expr": "TIMESTAMP_SECONDS(game_date)"},
+        key_prefix="nhl_ingestion"
 )
-def daily_schedule_expanded(context):
-    date = context.op_config["date"]
-    schedule = get_schedule_expanded(date, context)
-    return Output(schedule, metadata={"num_games": schedule.shape[0]})
+def daily_schedule_raw(context):
+    start_time, end_time = get_partition_time_range(context)
+    # get each day between the start_time and end_time
+    # and call the get_schedule_expanded function for each day
+    schedules = []
+    while start_time <= end_time:
+        schedules.append(get_schedule_expanded(start_time.strftime('%Y-%m-%d'), context))
+        start_time = start_time + timedelta(days=1)
 
-
-@graph
-def raw_schedule_data():
-    return daily_schedule_expanded()
-
-
-raw_schedule_asset = AssetsDefinition.from_graph(
-    raw_schedule_data,
-    partitions_def=nhl_future_week_daily_partition,
-    key_prefix="nhl_ingestion",
-)
+    return Output(pd.DataFrame(schedules), metadata={"schedule_count":len(schedules)})

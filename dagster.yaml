@@ -32,6 +32,7 @@ run_launcher:
       - DB_HOST
       - DB_PORT
       - SLACK_TOKEN
+      - GCP_CREDS
     networks:
       - dagster
     container_kwargs:
