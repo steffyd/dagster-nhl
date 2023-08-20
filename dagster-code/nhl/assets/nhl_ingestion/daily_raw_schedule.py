@@ -24,7 +24,7 @@ def schedule_raw(context):
     count = 0
     while start_time <= end_time:
         # add the schedule for the day to the schedules dataframe
-        schedules = schedules.append(get_schedule_expanded(start_time.strftime('%Y-%m-%d'), context))
+        schedules = pd.concat([schedules,get_schedule_expanded(start_time.strftime('%Y-%m-%d'), context)], ignore_index=True)
         # only log out every 10% of the schedule
         if count/total_days * 100 % 10 == 0:
             context.log.info(f"Retrieved schedule for {count} days")
