@@ -19,7 +19,8 @@ RUN pip install \
     requests \
     xgboost \
     pandas \
-    scikit-learn
+    scikit-learn \
+    dbt-postgres
 
 RUN apt update && \
     apt install -y gnupg curl && \
