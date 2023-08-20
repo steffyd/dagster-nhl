@@ -43,10 +43,8 @@ def get_schedule_expanded(date, context):
 
 def get_schedule(date, context):
     url = f"{BASE_URL}schedule?date={date}"
-    context.log.info(url)
     response = requests.get(url)
     data = response.json()
-    context.log.info(data)
     schedule = []
     if data["dates"] is None:
         return pd.DataFrame()
