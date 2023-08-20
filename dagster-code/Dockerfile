@@ -11,7 +11,7 @@ RUN pip install \
     dagster-docker \
     dagster-slack \
     dagster-gcp \
-    dagster-gcp-pandas
+    dagster-gcp-pandas \
     sqlalchemy==1.4.46
 
 RUN pip install \
