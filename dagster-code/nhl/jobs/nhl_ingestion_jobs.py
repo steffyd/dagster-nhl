@@ -15,22 +15,6 @@ def nhl_daily_partitioned_config(start: datetime, _end: datetime):
         }
     }
 
-
-@daily_partitioned_config(start_date="1990-08-01", end_offset=7)
-def nhl_schedule_daily_partitioned_config(start: datetime, _end: datetime):
-    return {
-        "ops": {
-            "raw_schedule_data": {
-                "ops": {
-                    "daily_schedule_expanded": {
-                        "config": {"date": start.strftime("%Y-%m-%d")}
-                    }
-                }
-            }
-        }
-    }
-
-
 daily_nhl_games_job = define_asset_job(
     "daily_nhl_games_job",
     AssetSelection.keys("nhl_ingestion/raw_game_data"),
@@ -38,9 +22,8 @@ daily_nhl_games_job = define_asset_job(
     config=nhl_daily_partitioned_config,
 )
 
-daily_nhl_schedule_job = define_asset_job(
-    "daily_nhl_schedule_job",
-    AssetSelection.keys("nhl_ingestion/raw_schedule_data"),
-    partitions_def=nhl_future_week_daily_partition,
-    config=nhl_schedule_daily_partitioned_config,
+nhl_schedule_job = define_asset_job(
+    name="nhl_schedule_job",
+    selection=AssetSelection.keys("nhl_ingestion/schedule_raw"),
+    partitions_def=nhl_future_week_daily_partition
 )

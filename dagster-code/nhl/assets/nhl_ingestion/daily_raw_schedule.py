@@ -13,7 +13,7 @@ from assets.partitions import nhl_future_week_daily_partition
         metadata={"partition_expr": "TIMESTAMP_SECONDS(game_date)"},
         key_prefix="nhl_ingestion"
 )
-def daily_schedule_raw(context):
+def schedule_raw(context):
     start_time, end_time = get_partition_time_range(context)
     # get each day between the start_time and end_time
     # and call the get_schedule_expanded function for each day
