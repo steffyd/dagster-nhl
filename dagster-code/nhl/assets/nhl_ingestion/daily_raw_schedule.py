@@ -20,6 +20,7 @@ def schedule_raw(context):
     schedules = []
     while start_time <= end_time:
         schedules.append(get_schedule_expanded(start_time.strftime('%Y-%m-%d'), context))
+        context.log.info(f"Retrieved schedule for {start_time.strftime('%Y-%m-%d')}")
         start_time = start_time + timedelta(days=1)
 
     return Output(pd.DataFrame(schedules), metadata={"schedule_count":len(schedules)})
