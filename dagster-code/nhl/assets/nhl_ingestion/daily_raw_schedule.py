@@ -24,7 +24,8 @@ def schedule_raw(context):
     count = 0
     while start_time <= end_time:
         schedules.append(get_schedule_expanded(start_time.strftime('%Y-%m-%d'), context))
-        if count % 10 == 0:
+        # only log out every 10% of the schedule
+        if count/total_days * 100 % 10 == 0:
             context.log.info(f"Retrieved schedule for {count} days")
         start_time = start_time + timedelta(days=1)
         count += 1
