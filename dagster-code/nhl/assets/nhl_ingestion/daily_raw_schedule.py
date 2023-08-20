@@ -19,15 +19,16 @@ def schedule_raw(context):
     total_days = (end_time - start_time).days + 1
     # get each day between the start_time and end_time
     # and call the get_schedule_expanded function for each day
-    schedules = []
+    schedules = pd.DataFrame()
     context.log.info(f"Retrieving schedule for {total_days} days")
     count = 0
     while start_time <= end_time:
-        schedules.append(get_schedule_expanded(start_time.strftime('%Y-%m-%d'), context))
+        # add the schedule for the day to the schedules dataframe
+        schedules = schedules.append(get_schedule_expanded(start_time.strftime('%Y-%m-%d'), context))
         # only log out every 10% of the schedule
         if count/total_days * 100 % 10 == 0:
             context.log.info(f"Retrieved schedule for {count} days")
         start_time = start_time + timedelta(days=1)
         count += 1
 
-    return Output(pd.DataFrame(schedules), metadata={"schedule_count":len(schedules)})
+    return Output(schedules, metadata={"schedule_count":len(schedules)})
