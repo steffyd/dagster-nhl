@@ -30,8 +30,5 @@ def schedule_raw(context):
             context.log.info(f"Retrieved schedule for {count} days")
         start_time = start_time + timedelta(days=1)
         count += 1
-
-    # log out the type of the game_date column
-    context.log.info(f"game_date column type: {schedules['game_date'].dtype}")
-
+        
     return Output(schedules, metadata={"schedule_count":len(schedules)})
