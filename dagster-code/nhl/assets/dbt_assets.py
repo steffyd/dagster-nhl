@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from dagster import DailyPartitionDefinition, OpExecutionContext
+from dagster import OpExecutionContext
 from dagster_dbt import DbtCliResource, dbt_assets
 from .partitions import nhl_daily_partition
 
