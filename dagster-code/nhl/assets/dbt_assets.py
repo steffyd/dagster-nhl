@@ -1,12 +1,24 @@
-from dagster_dbt import load_assets_from_dbt_project
-from utils.constants import DBT_PROJECT_DIR
+import json
+from pathlib import Path
+
+from dagster import DailyPartitionDefinition, OpExecutionContext
+from dagster_dbt import DbtCliResource, dbt_assets
 from .partitions import nhl_daily_partition
 
-def partition_key_to_vars(partition_key):
-    """ Map dagster partitions to the dbt var used in our model WHERE clauses """
-    return {"datetime_to_process": partition_key}
 
-dbt_assets = load_assets_from_dbt_project(DBT_PROJECT_DIR,
-                                          partitions_def= nhl_daily_partition,
-                                          partition_key_to_vars_fn=partition_key_to_vars,
-                                          select="game_data team_stats_windowed_82_games team_season_totals_by_date")
+@dbt_assets(
+    manifest=Path("target", "manifest.json"),
+    partitions_def=nhl_daily_partition
+)
+def game_data(context: OpExecutionContext, dbt: DbtCliResource):
+    time_window = context.asset_partitions_time_window_for_output(
+        list(context.selected_output_names)[0]
+    )
+
+    dbt_vars = {
+        "min_date": time_window.start.isoformat(),
+        "max_date": time_window.end.isoformat()
+    }
+    dbt_build_args = ["build", "--vars", json.dumps(dbt_vars)]
+
+    yield from dbt.cli(dbt_build_args, context=context).stream()

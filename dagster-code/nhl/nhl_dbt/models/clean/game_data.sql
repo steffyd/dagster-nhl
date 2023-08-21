@@ -1,8 +1,12 @@
 {{
     config(
         materialized='incremental',
-        incremental_strategy='delete+insert',
-        unique_key='game_id'
+        incremental_strategy='insert_overwrite',
+        partition_by={
+            "field": "game_date",
+            "data_type": "datetime",
+            "granularity": "day"
+        }
     )
 }}
 
@@ -11,9 +15,10 @@
 -- the data into a single row
 with home as (
     select *
-    from {{source('nhl_ingestion', 'raw_game_data')}}
+    from {{source('nhl_ingestion', 'game_data_raw')}}
     {% if is_incremental() %}
-    where partition_key = '{{ var('datetime_to_process') }}'
+    where game_date >= '{{ var('min_date') }}'
+    and game_date <= '{{ var('max_date') }}'
     and team_type = 'home'
     {% endif %}
     {% if not is_incremental() %}
@@ -21,9 +26,10 @@ with home as (
     {% endif %}
 ), away as (
     select *
-    from {{source('nhl_ingestion', 'raw_game_data')}}
+    from {{source('nhl_ingestion', 'game_data_raw')}}
     {% if is_incremental() %}
-    where partition_key = '{{ var('datetime_to_process') }}'
+    where game_date >= '{{ var('min_date') }}'
+    and game_date <= '{{ var('max_date') }}'
     and team_type = 'away'
     {% endif %}
     {% if not is_incremental() %}
@@ -60,7 +66,6 @@ select distinct
     away.blocked as away_blocked,
     away.takeaways as away_takeaways,
     away.giveaways as away_giveaways,
-    away.hits as away_hits,
-    home.partition_key as partition_key
+    away.hits as away_hits
 from home
 join away on home.game_id = away.game_id

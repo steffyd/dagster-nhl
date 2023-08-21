@@ -1,10 +1,2 @@
 version: 2
 models:
-  - name: team_season_totals_by_date
-    description: "Team season totals by date"
-  # - name: regular_season_training_data
-  #   description: "Training data available to train our model"
-  # - name: team_pythagorean_expectation_windowed
-  #   description: "pythagorean expectation for each team for the trailing 82 regular season games"
-  - name: team_stats_windowed_82_games
-    description: "Team stats for the trailing 82 regular season games"
