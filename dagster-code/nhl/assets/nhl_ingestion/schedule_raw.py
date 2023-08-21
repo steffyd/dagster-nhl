@@ -11,7 +11,7 @@ from math import floor
         io_manager_key="warehouse_io_manager",
         partitions_def=nhl_future_week_daily_partition,
         compute_kind="api",
-        metadata={"partition_expr": "TIMESTAMP_SECONDS(game_date)"}
+        metadata={"partition_expr": "game_date"}
 )
 def schedule_raw(context):
     start_time, end_time = get_partition_time_range(context)
