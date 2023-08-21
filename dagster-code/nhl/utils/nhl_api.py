@@ -54,7 +54,7 @@ def get_schedule(date, context):
             schedule.append(
                 {
                     "game_id": game["gamePk"],
-                    "game_date": date_data["date"],
+                    "game_date": pd.to_datetime(date_data["date"]),
                     "home_team": game["teams"]["home"]["team"]["name"],
                     "away_team": game["teams"]["away"]["team"]["name"],
                     "game_type": game["gameType"],

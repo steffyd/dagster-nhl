@@ -42,7 +42,7 @@ def fetch_team_stats(context, schedule_row) -> pd.DataFrame:
 @op(
     out=Out(
         io_manager_key="warehouse_io_manager",
-        metadata={"partition_expr": "TIMESTAMP_SECONDS(game_date)"}
+        metadata={"partition_expr": "game_date"}
     )
 )
 def daily_game_stats(context, game_stats: list[pd.DataFrame]):
