@@ -128,6 +128,9 @@ services:
       DB_PORT:
       SLACK_TOKEN:
       GCP_CREDS:
+      GCP_PRIVATE_KEY_ID:
+      GCP_PRIVATE_KEY:
+      GCP_CLIENT_ID:
 
     volumes: # Make docker client accessible so we can launch containers using host docker
       - /var/run/docker.sock:/var/run/docker.sock
@@ -187,6 +190,9 @@ services:
       DB_PORT:
       SLACK_TOKEN:
       GCP_CREDS:
+      GCP_PRIVATE_KEY_ID:
+      GCP_PRIVATE_KEY:
+      GCP_CLIENT_ID:
 
     networks:
       - dagster
