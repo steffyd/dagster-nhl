@@ -1,59 +1,30 @@
 import datetime as dt
 import pandas as pd
-from dagster import (
-    graph_asset,
-    op,
-    Out,
-    DynamicOut,
-    DynamicOutput,
-    Output,
-)
-from utils.nhl_api import get_schedule, get_team_stats
-from utils.utils import get_partition_time_range
+from dagster import asset, Output
+from utils.nhl_api import get_team_stats
 from assets.partitions import nhl_daily_partition
 
 
-@op
-def daily_schedule(context):
-    start_date, end_date = get_partition_time_range(context)
-    schedule = pd.DataFrame()
-    while start_date <= end_date:
-        schedule = pd.concat([schedule, get_schedule(start_date.strftime('%Y-%m-%d'), context)], ignore_index=True)
-        start_date = start_date + dt.timedelta(days=1)
-    context.log.info(f"Found {schedule.shape[0]} games to process")
-    return schedule
-
-
-@op(out=DynamicOut())
-def split_schedule_by_game(context, daily_schedule):
-    for index, row in daily_schedule.iterrows():
-        yield DynamicOutput(row, mapping_key=str(index))
-
-
-@op
-def fetch_team_stats(context, schedule_row) -> pd.DataFrame:
-    game_id = schedule_row["game_id"]
-    team_stats_for_game = get_team_stats(game_id)
-    team_stats_for_game["game_date"] = schedule_row["game_date"]
-    team_stats_for_game["game_type"] = schedule_row["game_type"]
-    team_stats_for_game["season"] = schedule_row["season"]
-    return team_stats_for_game
-
-
-@op(
-    out=Out(
+@asset(
         io_manager_key="warehouse_io_manager",
-        metadata={"partition_expr": "game_date"}
-    )
+        partitions_def=nhl_daily_partition,
+        compute_kind="api",
+        metadata={"partition_expr": "game_date"},
+        output_required=False
 )
-def daily_game_stats(context, game_stats: list[pd.DataFrame]):
-    if not game_stats:
-        return Output(pd.DataFrame(), metadata={"num_rows": 0})
-    days_game_stats = pd.concat(game_stats)
-    return Output(days_game_stats, metadata={"num_rows": days_game_stats.shape[0]})
+def game_data_raw(context, schedule_raw: pd.DataFrame):
+    # iterate over the schedule_raw dataframe and 
+    # call the get_team_stats function for each game
+    # and add the results to the game_data dataframe
+    game_data = pd.DataFrame()
+    for index, row in schedule_raw.iterrows():
+        team_stats_for_game = get_team_stats(row["game_id"], context)
+        team_stats_for_game["game_date"] = row["game_date"]
+        team_stats_for_game["game_type"] = row["game_type"]
+        team_stats_for_game["season"] = row["season"]
+        game_data = pd.concat([game_data, team_stats_for_game], ignore_index=True)
 
-
-@graph_asset(partitions_def=nhl_daily_partition)
-def game_data_raw():
-    result = split_schedule_by_game(daily_schedule()).map(fetch_team_stats).collect()
-    return daily_game_stats(result)
+    if not game_data.empty:
+        yield Output(game_data, metadata={"game_data_count":len(game_data)})
+    else:
+        context.log.info("No game data found for the given time range")
