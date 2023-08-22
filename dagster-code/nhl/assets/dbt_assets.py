@@ -9,9 +9,9 @@ from utils.constants import DBT_PROJECT_DIR
 
 @dbt_assets(
     manifest=Path(DBT_PROJECT_DIR, "target", "manifest.json"),
-    partitions_def=nhl_daily_partition
+    partitions_def=nhl_daily_partition,
 )
-def game_data(context: OpExecutionContext, dbt: DbtCliResource):
+def dbt_assets(context: OpExecutionContext, dbt: DbtCliResource):
     time_window = context.asset_partitions_time_window_for_output(
         list(context.selected_output_names)[0]
     )

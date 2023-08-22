@@ -2,3 +2,10 @@ version: 2
 models:
   - name: game_data
     description: "Flattened game_data with all home and away data for each game"
+    config:
+      meta:
+        dagster:
+          auto_materialize_policy:
+            type: eager
+          freshness_policy:
+            maximum_lag_minutes: 30
