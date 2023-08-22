@@ -7,6 +7,6 @@ nhl_ingestion_assets = load_assets_from_package_module(
     package_module=nhl_ingestion, group_name="nhl_ingestion"
 )
 
-dbt_assets = load_assets_from_modules([dbt_assets])
+dbt_assets = load_assets_from_modules([dbt_assets], group_name="dbt_assets")
 
 ASSETS = [*nhl_ingestion_assets, *dbt_assets]
