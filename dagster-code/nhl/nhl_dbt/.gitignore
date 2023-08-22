@@ -1,3 +1,4 @@
-
+target/graph.gpickle
+target/partial_parse.msgpack
 dbt_packages/
 logs/
