@@ -4,10 +4,11 @@ from pathlib import Path
 from dagster import OpExecutionContext
 from dagster_dbt import DbtCliResource, dbt_assets
 from .partitions import nhl_daily_partition
+from utils.constants import DBT_PROJECT_DIR
 
 
 @dbt_assets(
-    manifest=Path("target", "manifest.json"),
+    manifest=Path(DBT_PROJECT_DIR, "target", "manifest.json"),
     partitions_def=nhl_daily_partition
 )
 def game_data(context: OpExecutionContext, dbt: DbtCliResource):
