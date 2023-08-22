@@ -20,7 +20,7 @@ RUN pip install \
     xgboost \
     pandas \
     scikit-learn \
-    dbt-postgres
+    dbt-bigquery
 
 RUN apt update && \
     apt install -y gnupg curl && \
