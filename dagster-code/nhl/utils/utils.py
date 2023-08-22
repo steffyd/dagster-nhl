@@ -18,8 +18,11 @@ def get_partition_time_range(context : OpExecutionContext) -> (datetime, datetim
     return query_start_time, query_end_time
 
 
-# write a utility that takes in a total value and a current value
-# and returns True if the current value is the closest possible value
-# to a multiple of 10% of the total value
-def is_closest_to_ten_percent(total, current):
-    return abs(current - (floor(current/total * 100) * total/100)) < abs(current - (floor(current/total * 100) + 1) * total/100)
+# write a utility that takes the total number of items
+# and the current index and returns true if the current index
+# is closest to a 10% increment
+def is_closest_to_ten_percent(total_items: int, current_index: int) -> bool:
+    current_val = floor(current_index/total_items * 100) % 10 == 0
+    prev_val = floor((current_index-1)/total_items * 100) % 10 == 0
+    # return only if the current index is closest to a 10% increment
+    return current_val and not prev_val

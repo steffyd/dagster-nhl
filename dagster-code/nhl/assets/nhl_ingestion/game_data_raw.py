@@ -1,5 +1,5 @@
 import pandas as pd
-from dagster import asset, Output
+from dagster import asset, Output, FreshnessPolicy, AutoMaterializePolicy
 from utils.nhl_api import get_team_stats
 from assets.partitions import nhl_daily_partition
 from utils.utils import is_closest_to_ten_percent
@@ -9,6 +9,9 @@ from utils.utils import is_closest_to_ten_percent
         partitions_def=nhl_daily_partition,
         compute_kind="api",
         metadata={"partition_expr": "game_date"},
+        output_required=False,
+        freshness_policy=FreshnessPolicy(maximum_lag_minutes=30),
+        auto_materialize_policy=AutoMaterializePolicy.eager(),
         output_required=False
 )
 def game_data_raw(context, schedule_raw: pd.DataFrame):
@@ -26,7 +29,7 @@ def game_data_raw(context, schedule_raw: pd.DataFrame):
         # only log out near 10% of the schedule
         if is_closest_to_ten_percent(len(schedule_raw), index):
             context.log.info(f"Retrieved game data for {index} games")
-            
+
     if not game_data.empty:
         yield Output(game_data, metadata={"game_data_count":len(game_data)})
     else:
