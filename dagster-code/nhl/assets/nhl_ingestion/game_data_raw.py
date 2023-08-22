@@ -31,6 +31,7 @@ def game_data_raw(context, schedule_raw: pd.DataFrame):
         if is_closest_to_percentage_increment(total_items, index, 10):
             context.log.info(f"Retrieved game data for {floor(index/total_items * 100)}% of total games")
 
+    context.log.info(f"Retrieved game data for {total_items} games")
     if not game_data.empty:
         yield Output(game_data, metadata={"game_data_count":len(game_data)})
     else:
