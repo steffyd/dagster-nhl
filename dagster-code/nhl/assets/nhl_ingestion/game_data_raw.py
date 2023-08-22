@@ -20,6 +20,7 @@ def daily_schedule(context):
     while start_date <= end_date:
         schedule = pd.concat([schedule, get_schedule(start_date.strftime('%Y-%m-%d'), context)], ignore_index=True)
         start_date = start_date + dt.timedelta(days=1)
+    context.log.info(f"Found {schedule.shape[0]} games to process")
     return schedule
 
 
