@@ -2,7 +2,7 @@ from dagster import asset, Output
 import pandas as pd
 from datetime import timedelta
 from utils.nhl_api import get_schedule_expanded
-from utils.utils import get_partition_time_range
+from utils.utils import get_partition_time_range, is_closest_to_percentage_increment
 from assets.partitions import nhl_future_week_daily_partition
 from math import floor
 
@@ -26,9 +26,10 @@ def schedule_raw(context):
     while start_time <= end_time:
         # add the schedule for the day to the schedules dataframe
         schedules = pd.concat([schedules,get_schedule_expanded(start_time.strftime('%Y-%m-%d'), context)], ignore_index=True)
-        # only log out near 10% of the schedule
-        if floor(count/total_days * 100) % 10 == 0:
-            context.log.info(f"Retrieved schedule for {count} days")
+        # only log out near a set % chunk of the total items
+        if is_closest_to_percentage_increment(total_days, count, 10):
+            context.log.info(f"Retrieved schedule data for {floor(count/total_days * 100)}% of total days")
+
         start_time = start_time + timedelta(days=1)
         count += 1
     if not schedules.empty:

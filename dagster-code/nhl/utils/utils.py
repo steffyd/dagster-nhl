@@ -20,9 +20,9 @@ def get_partition_time_range(context : OpExecutionContext) -> (datetime, datetim
 
 # write a utility that takes the total number of items
 # and the current index and returns true if the current index
-# is closest to a 10% increment
-def is_closest_to_ten_percent(total_items: int, current_index: int) -> bool:
-    current_val = floor(current_index/total_items * 100) % 10 == 0
-    prev_val = floor((current_index-1)/total_items * 100) % 10 == 0
-    # return only if the current index is closest to a 10% increment
+# is closest to a percentage_value increment
+def is_closest_to_percentage_increment(total_items: int, current_index: int, percentage_value: int) -> bool:
+    current_val = floor(current_index/total_items * 100) % percentage_value == 0
+    prev_val = floor((current_index-1)/total_items * 100) % percentage_value == 0
+    # return only if the current index is closest to a percentage_value increment
     return current_val and not prev_val
