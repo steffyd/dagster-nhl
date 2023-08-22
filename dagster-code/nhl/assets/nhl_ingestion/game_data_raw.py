@@ -11,8 +11,7 @@ from utils.utils import is_closest_to_ten_percent
         metadata={"partition_expr": "game_date"},
         output_required=False,
         freshness_policy=FreshnessPolicy(maximum_lag_minutes=30),
-        auto_materialize_policy=AutoMaterializePolicy.eager(),
-        output_required=False
+        auto_materialize_policy=AutoMaterializePolicy.eager()
 )
 def game_data_raw(context, schedule_raw: pd.DataFrame):
     # iterate over the schedule_raw dataframe and 
