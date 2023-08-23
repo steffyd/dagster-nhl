@@ -1,12 +1,14 @@
 {{
     config(
         materialized='incremental',
-        incremental_strategy='insert_overwrite',
+        incremental_strategy='merge',
         partition_by={
             "field": "game_date",
             "data_type": "datetime",
             "granularity": "day"
-        }
+        },
+        unique_key='game_id',
+        cluster_by='game_id'
     )
 }}
 
