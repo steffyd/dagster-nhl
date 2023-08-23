@@ -1,6 +1,6 @@
 from typing import Any, Mapping
 
-from dagster import AssetKey
+from dagster import AssetKey, MetadataValue
 from dagster_dbt import DagsterDbtTranslator
 
 
