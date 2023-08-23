@@ -7,8 +7,7 @@
             "data_type": "datetime",
             "granularity": "day"
         },
-        unique_key='game_id',
-        cluster_by='game_date'
+        unique_key='game_id'
     )
 }}
 
