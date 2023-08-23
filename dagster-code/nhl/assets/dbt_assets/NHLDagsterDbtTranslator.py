@@ -17,3 +17,9 @@ class NHLDagsterDbtTranslator(DagsterDbtTranslator):
             prefix = asset_key[0]
             ret_asset_key = AssetKey(f"{prefix}_{asset_key[1]}")
         return ret_asset_key
+    @classmethod
+    def get_asset_metadata(cls, dbt_resource_props: Mapping[str, Any]) -> Mapping[str, MetadataValue]:
+        metadata = super().get_asset_metadata(dbt_resource_props)
+        # add the dbt model name as a metadata value
+        metadata["partition_expr"] = dbt_resource_props["config"]["meta"]["partition_expr"]
+        return metadata
