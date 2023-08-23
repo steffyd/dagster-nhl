@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from datetime import datetime
 
 from dagster import OpExecutionContext
 from dagster_dbt import DbtCliResource, dbt_assets
@@ -17,8 +18,8 @@ def dbt_assets(context: OpExecutionContext, dbt: DbtCliResource):
     )
 
     dbt_vars = {
-        "min_date": time_window.start.strptime("YYYY-MM-DD"),
-        "max_date": time_window.end.strptime("YYYY-MM-DD")
+        "min_date": datetime.strptime(time_window.start, '%Y-%m-%d'),
+        "max_date": datetime.strptime(time_window.end, '%Y-%m-%d')
     }
     dbt_build_args = ["build", "--vars", json.dumps(dbt_vars)]
 
