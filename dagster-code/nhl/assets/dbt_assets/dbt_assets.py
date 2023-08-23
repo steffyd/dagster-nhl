@@ -6,12 +6,15 @@ from dagster import OpExecutionContext
 from dagster_dbt import DbtCliResource, dbt_assets
 from .partitions import nhl_daily_partition
 from utils.constants import DBT_PROJECT_DIR
+from NHLDagsterDbtTranslator import NHLDagsterDbtTranslator 
+
 
 
 @dbt_assets(
     manifest=Path(DBT_PROJECT_DIR, "target", "manifest.json"),
     partitions_def=nhl_daily_partition,
     io_manager_key="warehouse_io_manager",
+    translator=NHLDagsterDbtTranslator,
 )
 def dbt_assets(context: OpExecutionContext, dbt: DbtCliResource):
     time_window = context.asset_partitions_time_window_for_output(
