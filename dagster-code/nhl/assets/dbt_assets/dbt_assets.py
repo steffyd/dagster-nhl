@@ -12,7 +12,6 @@ from .NHLDagsterDbtTranslator import NHLDagsterDbtTranslator
 @dbt_assets(
     manifest=Path(DBT_PROJECT_DIR, "target", "manifest.json"),
     partitions_def=nhl_daily_partition,
-    io_manager_key="warehouse_io_manager",
     dagster_dbt_translator=NHLDagsterDbtTranslator(),
 )
 def dbt_assets(context: OpExecutionContext, dbt: DbtCliResource):
