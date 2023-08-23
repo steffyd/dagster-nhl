@@ -8,7 +8,7 @@
             "granularity": "day"
         },
         unique_key='game_id',
-        cluster_by='game_id'
+        cluster_by='game_date'
     )
 }}
 
