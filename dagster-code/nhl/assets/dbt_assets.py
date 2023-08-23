@@ -18,8 +18,8 @@ def dbt_assets(context: OpExecutionContext, dbt: DbtCliResource):
     )
 
     dbt_vars = {
-        "min_date": datetime.strptime(time_window.start, '%Y-%m-%d'),
-        "max_date": datetime.strptime(time_window.end, '%Y-%m-%d')
+        "min_date": time_window.start.strftime('%Y-%m-%d'),
+        "max_date": time_window.end.strftime('%Y-%m-%d')
     }
     dbt_build_args = ["build", "--vars", json.dumps(dbt_vars)]
 
