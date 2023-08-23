@@ -13,7 +13,7 @@ from .NHLDagsterDbtTranslator import NHLDagsterDbtTranslator
     manifest=Path(DBT_PROJECT_DIR, "target", "manifest.json"),
     partitions_def=nhl_daily_partition,
     io_manager_key="warehouse_io_manager",
-    translator=NHLDagsterDbtTranslator,
+    dagster_dbt_translator=NHLDagsterDbtTranslator,
 )
 def dbt_assets(context: OpExecutionContext, dbt: DbtCliResource):
     time_window = context.asset_partitions_time_window_for_output(
