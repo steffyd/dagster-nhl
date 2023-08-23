@@ -5,7 +5,7 @@
         partition_by={
             "field": "game_date",
             "data_type": "datetime",
-            "granularity": "day"
+            "granularity": "month"
         },
         unique_key='game_id'
     )
