@@ -32,7 +32,8 @@ def schedule_raw(context):
 
         start_time = start_time + timedelta(days=1)
         count += 1
-    if not schedules.empty:
-        yield Output(schedules, metadata={"schedule_count":len(schedules)})
-    else:
-        context.log.info("No schedule found for the given time range")
+    return Output(schedules, metadata={"schedule_count":len(schedules)})
+    # if not schedules.empty:
+    #     yield Output(schedules, metadata={"schedule_count":len(schedules)})
+    # else:
+    #     context.log.info("No schedule found for the given time range")
