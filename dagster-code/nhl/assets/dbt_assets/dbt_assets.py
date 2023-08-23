@@ -1,10 +1,9 @@
 import json
 from pathlib import Path
-from datetime import datetime
 
 from dagster import OpExecutionContext
 from dagster_dbt import DbtCliResource, dbt_assets
-from .partitions import nhl_daily_partition
+from ..partitions import nhl_daily_partition
 from utils.constants import DBT_PROJECT_DIR
 from NHLDagsterDbtTranslator import NHLDagsterDbtTranslator 
 
