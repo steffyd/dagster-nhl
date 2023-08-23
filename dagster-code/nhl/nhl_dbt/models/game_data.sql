@@ -2,11 +2,6 @@
     config(
         materialized='incremental',
         incremental_strategy='merge',
-        partition_by={
-            "field": "game_date",
-            "data_type": "datetime",
-            "granularity": "month"
-        },
         unique_key='game_id'
     )
 }}
