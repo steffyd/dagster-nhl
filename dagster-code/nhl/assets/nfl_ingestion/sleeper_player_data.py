@@ -12,7 +12,10 @@ def sleeper_player_data(context):
     # get the sleeper player data
     sleeper_player_data = requests.get("https://api.sleeper.app/v1/players/nfl").json()
     # convert the json data to a pandas dataframe
-    sleeper_player_data = pd.DataFrame.from_dict(sleeper_player_data)
-    context.log.info(sleeper_player_data.head(10).to_string())
+    sleeper_player_data = pd.DataFrame.from_dict(sleeper_player_data, orient='index')
+    # add the player_id as a column
+    sleeper_player_data["player_id"] = sleeper_player_data.index
+    # add the player_id as an index
+    sleeper_player_data = sleeper_player_data.set_index("player_id")
 
     return Output(sleeper_player_data, metadata={"sleeper_player_data_count":len(sleeper_player_data)})
