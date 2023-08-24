@@ -25,7 +25,7 @@ def espn_nfl_player_ids(context):
     # get the initial page of espn player ids
     espn_player_ids = translate_items_to_ids(espn_player_ids["items"])
     # iterate over the remaining pages of espn player ids
-    for page in range(2, total_pages):
+    for page in range(2, total_pages + 1):
         espn_player_ids = espn_player_ids + translate_items_to_ids(requests.get(f"https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/athletes?limit=1000&page={page}").json()["items"])
 
     # convert the list of espn player ids to a pandas dataframe
