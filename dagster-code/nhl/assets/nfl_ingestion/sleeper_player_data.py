@@ -5,6 +5,7 @@ import pandas as pd
 @asset(
         io_manager_key="warehouse_io_manager",
         compute_kind="api",
+        description="All sleeper player data for nfl players",
         freshness_policy=FreshnessPolicy(maximum_lag_minutes=60*24, cron_schedule="0 0 * * *", cron_schedule_timezone="America/Denver"),
         auto_materialize_policy=AutoMaterializePolicy.eager()
 )
