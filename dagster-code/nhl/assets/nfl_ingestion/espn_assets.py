@@ -95,8 +95,7 @@ def espn_nfl_player_stats_by_season(context, espn_nfl_player_ids):
             if seasons is None:
                 continue
             for season in seasons:
-                url = season["statistics"][0]["statistics"]
-                context.log.info(url)
+                url = season["statistics"][0]["statistics"]["$ref"]
                 # extract the season from the url using regex, which looks like this: http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2020/types/2/athletes/2330/statistics?lang=en&region=us
                 season = re.search(r"seasons\/(\d+)", url).group(1)            
                 season_player_stats = requests.get(url).json()
