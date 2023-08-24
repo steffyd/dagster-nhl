@@ -102,6 +102,8 @@ def espn_nfl_player_stats_by_season(context, espn_nfl_player_ids):
                 season_stat = pd.DataFrame()
                 season_stat["player_id"] = [player_id]
                 season_stat["season"] = [season]
+                if "splits" not in season_player_stats:
+                    context.log.info(f"Splits stats doesn't exist in season_player_stats for player_id: {player_id} for season {season}")
                 for category in season_player_stats["splits"]["categories"]:
                     for stats in category["stats"]:
                         stat_name = stats["name"]
