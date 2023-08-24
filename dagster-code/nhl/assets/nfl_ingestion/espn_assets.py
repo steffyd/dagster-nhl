@@ -1,7 +1,7 @@
 from dagster import asset, Output, FreshnessPolicy, AutoMaterializePolicy
 import requests
 import pandas as pd
-from utils.utils import is_closest_to_percentage_increment
+from utils.utils import is_closest_to_percentage_increment, get_json_field, get_nested_json_field
 from math import floor
 
 def translate_items_to_ids(items):
@@ -55,13 +55,15 @@ def espn_nfl_player(context, espn_nfl_player_ids):
         nfl_player = pd.DataFrame()
         nfl_player["player_id"] = [index]
         nfl_player["player_name"] = [nfl_player_json["displayName"]]
-        nfl_player["weight"] = [nfl_player_json["weight"]]
-        nfl_player["height"] = [nfl_player_json["height"]]
-        nfl_player["birth_date"] = [nfl_player_json["dateOfBirth"]]
-        nfl_player["debut_year"] = [nfl_player_json["debutYear"]]
-        nfl_player["position"] = [nfl_player_json["position"]["abbreviation"]]
+        # check if the player has weight, height, dateOfBirth, debutYear, position, experience, and status
+        # if not, set the value to None
+        nfl_player["weight"] = [get_json_field(nfl_player_json, "weight")]
+        nfl_player["height"] = [get_json_field(nfl_player_json,"height")]
+        nfl_player["birth_date"] = [get_json_field(nfl_player_json,"dateOfBirth")]
+        nfl_player["debut_year"] = [get_json_field(nfl_player_json,"debutYear")]
+        nfl_player["position"] = [get_nested_json_field(nfl_player_json,"position","abbreviation")]
         nfl_player["experience"] = [nfl_player_json["experience"]]
-        nfl_player["status"] = [nfl_player_json["status"]["name"]]
+        nfl_player["status"] = [get_nested_json_field(nfl_player_json,"status","name")]
         espn_nfl_player_data = pd.concat([pd.DataFrame(espn_nfl_player_data), nfl_player], ignore_index=True)
         # only log out near a set % chunk of the total items
         if is_closest_to_percentage_increment(total_items, index, 10):

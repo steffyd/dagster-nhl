@@ -26,3 +26,19 @@ def is_closest_to_percentage_increment(total_items: int, current_index: int, per
     prev_val = floor((current_index-1)/total_items * 100) % percentage_value == 0
     # return only if the current index is closest to a percentage_value increment
     return current_val and not prev_val
+
+# check if a field is in a json object
+# if not, set the value to None
+def get_json_field(json_obj: dict, field: str) -> str:
+    if field in json_obj:
+        return json_obj[field]
+    else:
+        return None
+
+# check if a nested field is in a json object
+# if not, set the value to None
+def get_nested_json_field(json_obj: dict, field: str, nested_field: str) -> str:
+    if field in json_obj:
+        if nested_field in json_obj[field]:
+            return json_obj[field][nested_field]
+    return None
