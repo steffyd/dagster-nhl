@@ -3,6 +3,7 @@ import requests
 import pandas as pd
 from utils.utils import is_closest_to_percentage_increment, get_json_field, get_nested_json_field
 from math import floor
+import re
 
 def translate_items_to_ids(items):
     # convert each item in items that looks like this:
@@ -74,3 +75,42 @@ def espn_nfl_player(context, espn_nfl_player_ids):
     # add the player_id as an index
     espn_nfl_player_data = espn_nfl_player_data.set_index("player_id")
     return Output(espn_nfl_player_data, metadata={"espn_nfl_player_data_count":len(espn_nfl_player_data)})
+
+@asset(
+        io_manager_key="warehouse_io_manager",
+        compute_kind="api",
+        description="All espn player data for nfl players",
+        freshness_policy=FreshnessPolicy(maximum_lag_minutes=60*24, cron_schedule="0 0 * * *", cron_schedule_timezone="America/Denver"),
+        auto_materialize_policy=AutoMaterializePolicy.eager()
+)
+def espn_nfl_player_stats_by_season(context, espn_nfl_player_ids):
+    # get the nfl players stat log for each espn player id
+    espn_nfl_player_stats_by_season = pd.DataFrame()
+    total_items = len(espn_nfl_player_ids)
+    context.log.info(f"Retrieving espn player stats by season for {total_items} players")
+    for index, row in espn_nfl_player_ids.iterrows():
+        player_id = row['player_id']
+        seasons = requests.get(f"http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/athletes/{player_id}/statisticslog?lang=en&region=us").json()["entries"]
+        for season in seasons:
+            url = season["statistics"][0]["statistics"]
+            # extract the season from the url using regex, which looks like this: http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2020/types/2/athletes/2330/statistics?lang=en&region=us
+            season = re.search(r"seasons\/(\d+)", url).group(1)            
+            season_player_stats = requests.get(url).json()
+            season_stat = pd.DataFrame()
+            season_stat["player_id"] = [player_id]
+            season_stat["season"] = [season]
+            for category in season_player_stats["splits"]["categories"]:
+                for stats in category["stats"]:
+                    stat_name = stats["name"]
+                    stat_value = stats["value"]
+                    season_stat[stat_name] = [stat_value]
+            espn_nfl_player_stats_by_season = pd.concat([pd.DataFrame(espn_nfl_player_stats_by_season), season_stat], ignore_index=True)
+        # only log out near a set % chunk of the total items
+        if is_closest_to_percentage_increment(total_items, index, 10):
+            context.log.info(f"Retrieved espn player stats by season for {floor(index/total_items * 100)}% of total players")
+    
+    # add an insert_date column
+    espn_nfl_player_stats_by_season["insert_date"] = pd.to_datetime("today")
+    # add the player_id as an index
+    espn_nfl_player_stats_by_season = espn_nfl_player_stats_by_season.set_index(["player_id", "season"])
+    return Output(espn_nfl_player_stats_by_season, metadata={"espn_nfl_player_stats_by_season_count":len(espn_nfl_player_stats_by_season)})
