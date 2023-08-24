@@ -1,6 +1,8 @@
 from dagster import asset, Output, FreshnessPolicy, AutoMaterializePolicy
 import requests
 import pandas as pd
+from utils.utils import is_closest_to_percentage_increment
+from math import floor
 
 def translate_items_to_ids(items):
     # convert each item in items that looks like this:
@@ -35,3 +37,38 @@ def espn_nfl_player_ids(context):
     # add the player_id as an index
     espn_player_ids = espn_player_ids.set_index("player_id")
     return Output(espn_player_ids, metadata={"espn_player_ids_count":len(espn_player_ids)})
+
+@asset(
+        io_manager_key="warehouse_io_manager",
+        compute_kind="api",
+        description="All espn player data for nfl players",
+        freshness_policy=FreshnessPolicy(maximum_lag_minutes=60*24, cron_schedule="0 0 * * *", cron_schedule_timezone="America/Denver"),
+        auto_materialize_policy=AutoMaterializePolicy.eager()
+)
+def espn_nfl_player(context, espn_nfl_player_ids):
+    # get nfl athlete data for each espn player id
+    espn_nfl_player_data = pd.DataFrame()
+    total_items = len(espn_nfl_player_ids)
+    context.log.info(f"Retrieving espn player data for {total_items} players")
+    for index, row in espn_nfl_player_ids.iterrows():
+        nfl_player_json = requests.get(f"https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/athletes/{row['player_id']}").json()
+        nfl_player = pd.DataFrame()
+        nfl_player["player_id"] = [index]
+        nfl_player["player_name"] = [nfl_player_json["displayName"]]
+        nfl_player["weight"] = [nfl_player_json["weight"]]
+        nfl_player["height"] = [nfl_player_json["height"]]
+        nfl_player["birth_date"] = [nfl_player_json["dateOfBirth"]]
+        nfl_player["debut_year"] = [nfl_player_json["debutYear"]]
+        nfl_player["position"] = [nfl_player_json["position"]["abbreviation"]]
+        nfl_player["experience"] = [nfl_player_json["experience"]]
+        nfl_player["status"] = [nfl_player_json["status"]["name"]]
+        espn_nfl_player_data = pd.concat([pd.DataFrame(espn_nfl_player_data), nfl_player], ignore_index=True)
+        # only log out near a set % chunk of the total items
+        if is_closest_to_percentage_increment(total_items, index, 10):
+            context.log.info(f"Retrieved espn player data for {floor(index/total_items * 100)}% of total players")
+    
+    # add an insert_date column
+    espn_nfl_player_data["insert_date"] = pd.to_datetime("today")
+    # add the player_id as an index
+    espn_nfl_player_data = espn_nfl_player_data.set_index("player_id")
+    return Output(espn_nfl_player_data, metadata={"espn_nfl_player_data_count":len(espn_nfl_player_data)})
