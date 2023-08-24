@@ -30,6 +30,8 @@ def espn_nfl_player_ids(context):
 
     # convert the list of espn player ids to a pandas dataframe
     espn_player_ids = pd.DataFrame(espn_player_ids, columns=["player_id"])
+    # add an insert_date column
+    espn_player_ids["insert_date"] = pd.to_datetime("today")
     # add the player_id as an index
     espn_player_ids = espn_player_ids.set_index("player_id")
     return Output(espn_player_ids, metadata={"espn_player_ids_count":len(espn_player_ids)})

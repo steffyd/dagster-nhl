@@ -18,5 +18,7 @@ def sleeper_player_data(context):
     sleeper_player_data["player_id"] = sleeper_player_data.index
     # add the player_id as an index
     sleeper_player_data = sleeper_player_data.set_index("player_id")
+    # add an insert_date column
+    sleeper_player_data["insert_date"] = pd.to_datetime("today")
 
     return Output(sleeper_player_data, metadata={"sleeper_player_data_count":len(sleeper_player_data)})
