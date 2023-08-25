@@ -22,8 +22,8 @@ def translate_items_to_ids(items):
 )
 def espn_nfl_player_ids(context):
     # clear the espn_nfl_player_ids table
-     with context.resources.bigquery.get_client() as client:
-         client.query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player_ids`")
+    with context.resources.bigquery.get_client() as client:
+        client.query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player_ids`")
 
     # get all espn player ids
     espn_player_ids = requests.get("https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/athletes?limit=1000").json()
