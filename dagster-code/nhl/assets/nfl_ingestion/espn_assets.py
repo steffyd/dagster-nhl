@@ -22,7 +22,9 @@ def translate_items_to_ids(items):
 )
 def espn_nfl_player_ids(context):
     # clear the espn_nfl_player_ids table
-    context.resources.bigquery.execute_query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player_ids`")
+     with context.resources.bigquery.get_client() as client:
+         client.query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player_ids`")
+
     # get all espn player ids
     espn_player_ids = requests.get("https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/athletes?limit=1000").json()
     # get the initial page, total pages we need to iterate over
@@ -53,7 +55,8 @@ def espn_nfl_player_ids(context):
 )
 def espn_nfl_player(context, espn_nfl_player_ids):
     # clear the espn_nfl_player_data table
-    context.resources.bigquery.execute_query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player_data`")
+    with context.resources.bigquery.get_client() as client:
+         client.query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player_data`")
     # get nfl athlete data for each espn player id
     espn_nfl_player_data = pd.DataFrame()
     total_items = len(espn_nfl_player_ids)
@@ -94,7 +97,8 @@ def espn_nfl_player(context, espn_nfl_player_ids):
 )
 def espn_nfl_player_stats_by_season(context, espn_nfl_player_ids):
     # clear the espn_nfl_player_stats_by_season table
-    context.resources.bigquery.execute_query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player_stats_by_season`")
+    with context.resources.bigquery.get_client() as client:
+         client.query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player_stats_by_season`")
     # get the nfl players stat log for each espn player id
     espn_nfl_player_stats_by_season = pd.DataFrame()
     total_items = len(espn_nfl_player_ids)
