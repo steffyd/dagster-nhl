@@ -1,4 +1,5 @@
 from dagster import asset, Output, FreshnessPolicy, AutoMaterializePolicy
+from dagster_gcp import BigQueryResource
 import requests
 import pandas as pd
 from utils.utils import is_closest_to_percentage_increment, get_json_field, get_nested_json_field
@@ -17,12 +18,11 @@ def translate_items_to_ids(items):
         compute_kind="api",
         description="All espn player ids for nfl players",
         freshness_policy=FreshnessPolicy(maximum_lag_minutes=60*24, cron_schedule="0 0 * * *", cron_schedule_timezone="America/Denver"),
-        auto_materialize_policy=AutoMaterializePolicy.eager(),
-        required_resource_keys={"bigquery"}
+        auto_materialize_policy=AutoMaterializePolicy.eager()
 )
-def espn_nfl_player_ids(context):
+def espn_nfl_player_ids(context, bigquery: BigQueryResource):
     # clear the espn_nfl_player_ids table
-    with context.resources.bigquery.get_client() as client:
+    with bigquery.get_client() as client:
         client.query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player_ids`")
 
     # get all espn player ids
@@ -50,12 +50,11 @@ def espn_nfl_player_ids(context):
         compute_kind="api",
         description="All espn player data for nfl players",
         freshness_policy=FreshnessPolicy(maximum_lag_minutes=60*24, cron_schedule="0 0 * * *", cron_schedule_timezone="America/Denver"),
-        auto_materialize_policy=AutoMaterializePolicy.eager(),
-        required_resource_keys={"bigquery"}
+        auto_materialize_policy=AutoMaterializePolicy.eager()
 )
-def espn_nfl_player(context, espn_nfl_player_ids):
+def espn_nfl_player(context, bigquery: BigQueryResource, espn_nfl_player_ids):
     # clear the espn_nfl_player_data table
-    with context.resources.bigquery.get_client() as client:
+    with bigquery.get_client() as client:
          client.query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player_data`")
     # get nfl athlete data for each espn player id
     espn_nfl_player_data = pd.DataFrame()
@@ -92,12 +91,11 @@ def espn_nfl_player(context, espn_nfl_player_ids):
         compute_kind="api",
         description="All espn player stats for nfl players",
         freshness_policy=FreshnessPolicy(maximum_lag_minutes=60*24, cron_schedule="0 0 * * *", cron_schedule_timezone="America/Denver"),
-        auto_materialize_policy=AutoMaterializePolicy.eager(),
-        required_resource_keys={"bigquery"}
+        auto_materialize_policy=AutoMaterializePolicy.eager()
 )
-def espn_nfl_player_stats_by_season(context, espn_nfl_player_ids):
+def espn_nfl_player_stats_by_season(context, bigquery: BigQueryResource, espn_nfl_player_ids):
     # clear the espn_nfl_player_stats_by_season table
-    with context.resources.bigquery.get_client() as client:
+    with bigquery.get_client() as client:
          client.query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player_stats_by_season`")
     # get the nfl players stat log for each espn player id
     espn_nfl_player_stats_by_season = pd.DataFrame()
