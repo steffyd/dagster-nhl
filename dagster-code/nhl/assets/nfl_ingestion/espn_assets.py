@@ -17,9 +17,12 @@ def translate_items_to_ids(items):
         compute_kind="api",
         description="All espn player ids for nfl players",
         freshness_policy=FreshnessPolicy(maximum_lag_minutes=60*24, cron_schedule="0 0 * * *", cron_schedule_timezone="America/Denver"),
-        auto_materialize_policy=AutoMaterializePolicy.eager()
+        auto_materialize_policy=AutoMaterializePolicy.eager(),
+        required_resource_keys={"bigquery"}
 )
 def espn_nfl_player_ids(context):
+    # clear the espn_nfl_player_ids table
+    context.resources.bigquery.execute_query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player_ids`")
     # get all espn player ids
     espn_player_ids = requests.get("https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/athletes?limit=1000").json()
     # get the initial page, total pages we need to iterate over
@@ -45,9 +48,12 @@ def espn_nfl_player_ids(context):
         compute_kind="api",
         description="All espn player data for nfl players",
         freshness_policy=FreshnessPolicy(maximum_lag_minutes=60*24, cron_schedule="0 0 * * *", cron_schedule_timezone="America/Denver"),
-        auto_materialize_policy=AutoMaterializePolicy.eager()
+        auto_materialize_policy=AutoMaterializePolicy.eager(),
+        required_resource_keys={"bigquery"}
 )
 def espn_nfl_player(context, espn_nfl_player_ids):
+    # clear the espn_nfl_player_data table
+    context.resources.bigquery.execute_query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player_data`")
     # get nfl athlete data for each espn player id
     espn_nfl_player_data = pd.DataFrame()
     total_items = len(espn_nfl_player_ids)
@@ -83,9 +89,12 @@ def espn_nfl_player(context, espn_nfl_player_ids):
         compute_kind="api",
         description="All espn player stats for nfl players",
         freshness_policy=FreshnessPolicy(maximum_lag_minutes=60*24, cron_schedule="0 0 * * *", cron_schedule_timezone="America/Denver"),
-        auto_materialize_policy=AutoMaterializePolicy.eager()
+        auto_materialize_policy=AutoMaterializePolicy.eager(),
+        required_resource_keys={"bigquery"}
 )
 def espn_nfl_player_stats_by_season(context, espn_nfl_player_ids):
+    # clear the espn_nfl_player_stats_by_season table
+    context.resources.bigquery.execute_query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player_stats_by_season`")
     # get the nfl players stat log for each espn player id
     espn_nfl_player_stats_by_season = pd.DataFrame()
     total_items = len(espn_nfl_player_ids)

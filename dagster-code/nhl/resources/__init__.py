@@ -5,6 +5,7 @@ from dagster import EnvVar
 from dagster_dbt import DbtCliResource
 from utils.constants import DBT_PROJECT_DIR, DBT_PROFILES_DIR
 from dagster_gcp_pandas import BigQueryPandasIOManager
+from dagster_gcp import BigQueryResource 
 import os
 
 RESOURCES = {
@@ -16,5 +17,6 @@ RESOURCES = {
         project="corellian-engineering-co",
         dataset="NHLData",
         gcp_credentials=EnvVar("GCP_CREDS")
-    )
+    ),
+    "bigquery": BigQueryResource(project="corellian-engineering-co", gcp_credentials=EnvVar("GCP_CREDS"))
 }
