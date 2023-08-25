@@ -10,8 +10,8 @@ def translate_items_to_ids(items):
     # convert each item in items that looks like this:
     #  {"$ref":"http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/athletes/4246273?lang=en&region=us"}
     # to this: 4246273
-    # using regex
-    return [re.search(r"athletes\/(\d+)", item["$ref"]).group(1) for item in items]
+    # using regex and convert to type int64
+    return [int(re.search(r"athletes\/(\d+)", item["$ref"]).group(1)) for item in items]
 
 @asset(
         io_manager_key="warehouse_io_manager",
