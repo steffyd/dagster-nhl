@@ -95,8 +95,12 @@ def espn_nfl_player(context, bigquery: BigQueryResource, espn_nfl_player_ids):
 )
 def espn_nfl_player_stats_by_season(context, bigquery: BigQueryResource, espn_nfl_player_ids):
     # clear the espn_nfl_player_stats_by_season table
-    with bigquery.get_client() as client:
-         client.query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player_stats_by_season`")
+    try:
+        with bigquery.get_client() as client:
+            client.query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player_stats_by_season`")
+    except:
+        #swallow it
+        pass
     # get the nfl players stat log for each espn player id
     espn_nfl_player_stats_by_season = pd.DataFrame()
     total_items = len(espn_nfl_player_ids)
