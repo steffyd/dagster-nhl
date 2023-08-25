@@ -18,5 +18,5 @@ RESOURCES = {
         dataset="NHLData",
         gcp_credentials=EnvVar("GCP_CREDS")
     ),
-    "bigquery": BigQueryResource(project="corellian-engineering-co", gcp_credentials=EnvVar("GCP_CREDS"))
+    "bigquery": BigQueryResource(project="corellian-engineering-co")
 }
