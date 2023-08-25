@@ -1,4 +1,5 @@
 from dagster import asset, Output, FreshnessPolicy, AutoMaterializePolicy
+from dagster_gcp import BigQueryResource
 import requests
 import pandas as pd
 
@@ -9,7 +10,10 @@ import pandas as pd
         freshness_policy=FreshnessPolicy(maximum_lag_minutes=60*24, cron_schedule="0 0 * * *", cron_schedule_timezone="America/Denver"),
         auto_materialize_policy=AutoMaterializePolicy.eager()
 )
-def sleeper_player_data(context):
+def sleeper_player_data(context, bigquery: BigQueryResource):
+    # clear the sleeper_player_data table
+    with bigquery.get_client() as client:
+        client.query("DELETE FROM `corellian-engineering-co.NHLData.sleeper_player_data`")
     # get the sleeper player data
     sleeper_player_data = requests.get("https://api.sleeper.app/v1/players/nfl").json()
     # convert the json data to a pandas dataframe

@@ -55,7 +55,7 @@ def espn_nfl_player_ids(context, bigquery: BigQueryResource):
 def espn_nfl_player(context, bigquery: BigQueryResource, espn_nfl_player_ids):
     # clear the espn_nfl_player_data table
     with bigquery.get_client() as client:
-         client.query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player_data`")
+         client.query("DELETE FROM `corellian-engineering-co.NHLData.espn_nfl_player`")
     # get nfl athlete data for each espn player id
     espn_nfl_player_data = pd.DataFrame()
     total_items = len(espn_nfl_player_ids)
@@ -122,10 +122,12 @@ def espn_nfl_player_stats_by_season(context, bigquery: BigQueryResource, espn_nf
                 if "splits" not in season_player_stats:
                     continue
                 for category in season_player_stats["splits"]["categories"]:
+                    cat_name = category["name"]
                     for stats in category["stats"]:
                         stat_name = stats["name"]
                         stat_value = stats["value"]
-                        season_stat[stat_name] = [stat_value]
+                        full_stat_name = f"{cat_name}_{stat_name}"
+                        season_stat[full_stat_name] = [stat_value]
                 espn_nfl_player_stats_by_season = pd.concat([pd.DataFrame(espn_nfl_player_stats_by_season), season_stat], ignore_index=True)
             # only log out near a set % chunk of the total items
             if is_closest_to_percentage_increment(total_items, index, 10):
