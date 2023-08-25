@@ -53,9 +53,10 @@ def espn_nfl_player(context, espn_nfl_player_ids):
     total_items = len(espn_nfl_player_ids)
     context.log.info(f"Retrieving espn player data for {total_items} players")
     for index, row in espn_nfl_player_ids.iterrows():
-        nfl_player_json = requests.get(f"https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/athletes/{row['player_id']}").json()
+        player_id = row['player_id']
+        nfl_player_json = requests.get(f"https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/athletes/{player_id}").json()
         nfl_player = pd.DataFrame()
-        nfl_player["player_id"] = [index]
+        nfl_player["player_id"] = [player_id]
         nfl_player["player_name"] = [nfl_player_json["displayName"]]
         # check if the player has weight, height, dateOfBirth, debutYear, position, experience, and status
         # if not, set the value to None
