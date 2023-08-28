@@ -75,6 +75,13 @@ def espn_nfl_player(context, bigquery: BigQueryResource, espn_nfl_player_ids):
         nfl_player["position"] = [get_nested_json_field(nfl_player_json,"position","abbreviation")]
         nfl_player["experience"] = [nfl_player_json["experience"]]
         nfl_player["status"] = [get_nested_json_field(nfl_player_json,"status","name")]
+        nfl_player["draft_year"] = [get_nested_json_field(nfl_player_json,"draft","year")]
+        nfl_player["draft_round"] = [get_nested_json_field(nfl_player_json,"draft","round")]
+        nfl_player["draft_selection"] = [get_nested_json_field(nfl_player_json,"draft","selection")]
+        # get team drafted by
+        ref_team_drafted = get_nested_json_field(nfl_player_json,"draft","team")["$ref"]
+        # use regex to get the team id from the url that looks like this: http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2000/teams/17?lang=en&region=us
+        nfl_player["draft_team_id"] = [int(re.search(r"teams\/(\d+)", ref_team_drafted).group(1))]
         espn_nfl_player_data = pd.concat([pd.DataFrame(espn_nfl_player_data), nfl_player], ignore_index=True)
         # only log out near a set % chunk of the total items
         if is_closest_to_percentage_increment(total_items, index, 10):
