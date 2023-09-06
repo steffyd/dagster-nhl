@@ -17,7 +17,7 @@ WITH
     DRAFT_SELECTION AS player_draft_select,
     IFNULL(DRAFT_YEAR, DEBUT_YEAR) AS player_draft_year
   FROM
-    `corellian-engineering-co.NHLData.espn_nfl_player`
+    {{source('nfl_ingestion', 'espn_nfl_player')}}
   WHERE
     position IN ('QB',
       'RB',
@@ -56,7 +56,7 @@ WITH
     PASSING_INTERCEPTIONS AS passing_int,
     PASSING_PASSINGFUMBLES AS passing_fum
   FROM
-    `corellian-engineering-co.NHLData.espn_nfl_player_stats_by_season`
+    {{source('nfl_ingestion', 'espn_nfl_player_stats_by_season')}}
   WHERE
     CAST(player_id AS STRING) IN (
     SELECT
