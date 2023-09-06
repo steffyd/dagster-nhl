@@ -10,3 +10,12 @@ models:
             type: eager
           freshness_policy:
             maximum_lag_minutes: 30
+  - name: nfl_features
+    description: "NFL features to feed into a model"
+    config:
+      meta:
+        dagster:
+          auto_materialize_policy:
+            type: eager
+          freshness_policy:
+            maximum_lag_minutes: 30

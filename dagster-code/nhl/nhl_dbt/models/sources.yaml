@@ -13,3 +13,15 @@ sources:
         meta:
             dagster:
               asset_key: ["game_data_raw"] # This metadata specifies the corresponding Dagster asset for this dbt source.
+  - name: nfl_ingestion
+    database: corellian-engineering-co
+    schema: NHLData
+    tables:
+      - name: espn_nfl_player
+        meta:
+            dagster:
+              asset_key: ["espn_nfl_player"]
+      - name: espn_nfl_player_stats_by_season
+        meta:
+            dagster:
+              asset_key: ["espn_nfl_player_stats_by_season"]
