@@ -33,7 +33,7 @@ def dbt_assets(context: OpExecutionContext, dbt: DbtCliResource):
     dagster_dbt_translator=NHLDagsterDbtTranslator(),
     select="nfl_features"
 )
-def nfl_assets(context: OpExecutionContext, dbt: DbtCliResource):
+def nfl_assets(dbt: DbtCliResource):
     dbt_build_args = ["build"]
 
-    yield from dbt.cli(dbt_build_args, context=context).stream()
+    yield from dbt.cli(dbt_build_args).stream()
