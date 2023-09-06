@@ -20,7 +20,8 @@ RUN pip install \
     xgboost \
     pandas \
     scikit-learn \
-    dbt-bigquery
+    dbt-bigquery \
+    yahoo_oauth
 
 RUN apt update && \
     apt install -y gnupg curl && \
