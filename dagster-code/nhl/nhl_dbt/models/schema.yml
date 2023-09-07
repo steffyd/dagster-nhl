@@ -17,5 +17,3 @@ models:
         dagster:
           auto_materialize_policy:
             type: eager
-          freshness_policy:
-            maximum_lag_minutes: 30
