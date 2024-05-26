@@ -1,0 +1,29 @@
+services:
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: code-server
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Mountain
+      - PROXY_DOMAIN=code.corellianengineeringco.com #optional
+      - DEFAULT_WORKSPACE=/home #optional
+    volumes:
+      - /home/code-server:/config
+    restart: unless-stopped
+    labels:
+      # traefikv2
+      - "traefik.enable=true"
+      - "traefik.http.routers.code.tls=true"
+      - "traefik.http.routers.code.rule=Host(`code.corellianengineeringco.com`)"
+      - "traefik.http.routers.code.tls.certresolver=le"
+      - "traefik.http.routers.code.entrypoints=websecure"
+      - "traefik.http.services.code.loadbalancer.server.port=8443"
+      - "traefik.http.routers.code.middlewares=oauth@file"
+
+      
+networks:
+  default:
+    name: home_default
+    external: true
+

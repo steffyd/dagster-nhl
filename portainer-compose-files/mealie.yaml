@@ -1,0 +1,71 @@
+version: "3.7"
+services:
+  mealie-frontend:
+    image: hkotel/mealie:frontend-v1.0.0beta-3
+    container_name: mealie-frontend
+    networks:
+      - mealie
+      - home_default
+    depends_on:
+      - mealie-api
+    environment:
+    # Set Frontend ENV Variables Here
+      - API_URL=http://mealie-api:9000
+    restart: always
+    volumes:
+      - /home/mealie-data:/app/data/
+    labels:
+      # traefikv2
+      - "traefik.enable=true"
+      - "traefik.http.routers.mealie.tls=true"
+      - "traefik.http.routers.mealie.rule=Host(`mealie.corellianengineeringco.com`)"
+      - "traefik.http.routers.mealie.tls.certresolver=le"
+      - "traefik.http.routers.mealie.entrypoints=websecure"
+      - "traefik.http.services.mealie.loadbalancer.server.port=3000"
+
+
+  mealie-api:
+    image: hkotel/mealie:api-v1.0.0beta-3
+    container_name: mealie-api
+    depends_on:
+      - postgres
+    networks:
+      - mealie
+    volumes:
+      - /home/mealie-data:/app/data/
+    environment:
+    # Set Backend ENV Variables Here
+      - ALLOW_SIGNUP=true
+      - PUID=0
+      - PGID=0
+      - TZ=America/Mountain
+      - MAX_WORKERS=1
+      - WEB_CONCURRENCY=1
+      - BASE_URL=https://mealie.corellianengineeringco.com
+
+    # Database Settings
+      - DB_ENGINE=postgres
+      - POSTGRES_USER=mealie
+      - POSTGRES_PASSWORD=mealie
+      - POSTGRES_SERVER=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=mealie
+    restart: always
+  
+  postgres:
+    container_name: postgres
+    image: postgres
+    restart: always
+    networks:
+      - mealie
+    environment:
+      POSTGRES_PASSWORD: mealie
+      POSTGRES_USER: mealie
+
+networks:
+  mealie:
+    name: mealie
+    external: false
+  home_default:
+    name: home_default
+    external: true

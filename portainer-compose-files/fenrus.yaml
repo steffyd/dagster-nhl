@@ -1,0 +1,24 @@
+services:
+  fenrus:
+    image: revenz/fenrus
+    container_name: fenrus
+    environment:
+      - TZ=Mountain
+    volumes:
+      - /home/fenrus/data:/app/data
+      - /home/fenrus/images:/app/wwwroot/images
+    restart: unless-stopped
+    labels:
+      # traefikv2
+      - "traefik.enable=true"
+      - "traefik.http.routers.fenrus.tls=true"
+      - "traefik.http.routers.fenrus.rule=Host(`corellianengineeringco.com`)"
+      - "traefik.http.routers.fenrus.tls.certresolver=le"
+      - "traefik.http.routers.fenrus.entrypoints=websecure"
+      - "traefik.http.services.fenrus.loadbalancer.server.port=3000"
+      - "traefik.http.routers.fenrus.middlewares=oauth@file"
+      
+networks:
+  default:
+    name: home_default
+    external: true
