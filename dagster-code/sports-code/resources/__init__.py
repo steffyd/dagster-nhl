@@ -7,6 +7,7 @@ from utils.constants import DBT_PROJECT_DIR, DBT_PROFILES_DIR, GCP_PROJECT_ID
 from dagster_gcp_pandas import BigQueryPandasIOManager
 from dagster_gcp import BigQueryResource, GCSResource
 import os
+from resources.espn_api_resource import EspnApiResource
 
 RESOURCES = {
     "postgres_resource_by_db": postgres_resource_by_db,
@@ -20,4 +21,5 @@ RESOURCES = {
     ),
     "bigquery": BigQueryResource(project=GCP_PROJECT_ID),
     "gcs": GCSResource(project=GCP_PROJECT_ID),
+    "espn_api": EspnApiResource(),
 }
