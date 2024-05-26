@@ -55,10 +55,10 @@ def nfl_schedule(context, espn_api: EspnApiResource):
 def premiere_league_schedule(context, espn_api: EspnApiResource):
     pass
 
-@asset(ins={"nfl_sched": AssetIn(key="nfl_schedule",partition_mapping=LastPartitionMapping()),
-            "nhl_sched": AssetIn(key="nhl_schedule",partition_mapping=LastPartitionMapping()),
-            "premier_league_sched": AssetIn(key="premiere_league_schedule",partition_mapping=LastPartitionMapping()),
-            "college_football_sched": AssetIn(key="college_football_schedule",partition_mapping=LastPartitionMapping())}
-      )
-def current_sports_schedule(context):
-    pass
+# @asset(ins={"nfl_sched": AssetIn(key="nfl_schedule",partition_mapping=LastPartitionMapping()),
+#             "nhl_sched": AssetIn(key="nhl_schedule",partition_mapping=LastPartitionMapping()),
+#             "premier_league_sched": AssetIn(key="premiere_league_schedule",partition_mapping=LastPartitionMapping()),
+#             "college_football_sched": AssetIn(key="college_football_schedule",partition_mapping=LastPartitionMapping())}
+#       )
+# def current_sports_schedule(context):
+#     pass
