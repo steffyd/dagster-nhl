@@ -1,0 +1,14 @@
+{
+    "name": "Dagster Development",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "args": {
+            "VARIANT": "python:3.10-slim"
+        }
+    },    
+    "postCreateCommand": "pip install --upgrade pip && pip install dagster dagster-postgres dagster-dbt dagster-docker dagster-slack dagster-gcp",
+
+    // Comment out to connect to the Docker host
+    // "remoteUser": "root"
+}
+

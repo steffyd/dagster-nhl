@@ -1,0 +1,2 @@
+FROM python:${VARIANT}
+EXPOSE 3000 
