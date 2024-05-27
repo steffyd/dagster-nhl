@@ -1,2 +1,3 @@
+from assets.ingest.nhl_games import nhl_game_data
 
-ASSETS = []
+ASSETS = [nhl_game_data]
