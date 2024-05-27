@@ -1,12 +1,21 @@
 {
     "name": "Dagster Development",
     "build": {
-        "dockerfile": "Dockerfile",
-        "args": {
-            "VARIANT": "python:3.10-slim"
+        "dockerfile": "../Dockerfile_base"
+    },
+    "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+    ],
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {
+            "version": "latest"
         }
-    },    
-    "postCreateCommand": "pip install --upgrade pip && pip install dagster dagster-postgres dagster-dbt dagster-docker dagster-slack dagster-gcp",
+    },
+    "forwardPorts": [22],  
+    "mounts": [
+        "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+    ],
 
     // Comment out to connect to the Docker host
     // "remoteUser": "root"
