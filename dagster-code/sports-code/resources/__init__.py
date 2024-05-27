@@ -5,6 +5,9 @@ from dagster import EnvVar
 from utils.constants import GCP_PROJECT_ID
 from dagster_gcp import BigQueryResource, GCSResource
 from .espn_api_resource import EspnApiResource
+from .partitioned_gcs_io_manager import PartitionedGCSIOManager
+
+gcs_resource = GCSResource(project=GCP_PROJECT_ID)
 
 RESOURCES = {
     "postgres_resource_by_db": postgres_resource_by_db,
@@ -12,6 +15,7 @@ RESOURCES = {
     "coc_slack_resource": coc_slack_resource,
     "bigquery": BigQueryResource(project=GCP_PROJECT_ID,
                                  gcp_credentials=EnvVar("GCP_CREDS")),
-    "gcs": GCSResource(project=GCP_PROJECT_ID),
+    "gcs": gcs_resource,
     "espn_api": EspnApiResource(),
+    "partitioned_gcs_io_manager": PartitionedGCSIOManager('nhl-game-data', gcs_resource),
 }
