@@ -2,10 +2,8 @@ from dagster import asset, AssetExecutionContext
 import requests
 from ..partitions import nhl_daily_partition
 from utils.nhl_api import get_schedule, BASE_URL
-import json
-from resources.partitioned_gcs_io_manager import PartitionedGCSIOManager
 
-@asset(partitions_def=nhl_daily_partition, io_manager_def=PartitionedGCSIOManager)
+@asset(partitions_def=nhl_daily_partition, io_manager_key="partitioned_gcs_io_manager")
 def nhl_game_data(context: AssetExecutionContext):
     for partitions in context.partition_keys:
         date = partitions['date']
