@@ -3,9 +3,8 @@ from dagster_gcp import GCSResource
 import json
 
 class PartitionedGCSIOManager(ConfigurableIOManager):
-    def __init__(self, bucket: str, client: GCSResource):
-        self.bucket = bucket
-        self.client = client
+    bucket: str
+    client: GCSResource
 
     def _get_blob(self, context, gameId):
         # Include the partition in the blob path
