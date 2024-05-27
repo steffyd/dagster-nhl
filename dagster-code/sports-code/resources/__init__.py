@@ -17,5 +17,5 @@ RESOURCES = {
                                  gcp_credentials=EnvVar("GCP_CREDS")),
     "gcs": gcs_resource,
     "espn_api": EspnApiResource(),
-    "partitioned_gcs_io_manager": PartitionedGCSIOManager('nhl-game-data', gcs_resource),
+    "partitioned_gcs_io_manager": PartitionedGCSIOManager(bucket='nhl-game-data', client=gcs_resource),
 }
