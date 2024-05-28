@@ -1,21 +1,22 @@
-FROM python:3.10-slim
+FROM python:3.9-slim-buster
 
-RUN apt-get update && apt-get install -y git openssh-client docker
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    git \ 
+    openssh-client \ 
+    cmake
 
-# Checkout and install dagster libraries needed to run the gRPC server
-# exposing your repository to dagit and dagster-daemon, and to load
-# the DagsterInstance
-
-RUN pip install \
+# Install Python packages
+RUN pip3 install --upgrade pip && \
+    pip3 install \
     dagster \
     dagster-dbt \
     dagster-docker \
     dagster-slack \
-    dagster-gcp 
-
-RUN pip install \
+    dagster-gcp \
     pyodbc \
     requests \
     xgboost
-    
+
 ENV DAGSTER_HOME=/opt/dagster/dagster_home

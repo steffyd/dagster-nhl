@@ -8,29 +8,28 @@
         "ms-python.vscode-pylance"
     ],
     "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:1": {
+            "version": "latest"
+        },
         "ghcr.io/devcontainers/features/git:1": {
             "version": "latest"
         }
     },
-    "forwardPorts": [22],  
+    "forwardPorts": [22],
     "mounts": [
         {
-            "source": "${localEnv:HOME}/.ssh", // macOS path
+            "source": "${localEnv:HOME}/.ssh", 
             "target": "/home/vscode/.ssh",
             "type": "bind",
             "consistency": "cached",
-            "condition": "localEnv:SSH_AUTH_SOCK" // Mount only if SSH_AUTH_SOCK is defined (macOS)
+            "condition": "localEnv:SSH_AUTH_SOCK"
         },
         {
-            "source": "${localEnv:USERPROFILE}\\.ssh",  // Windows path
+            "source": "${localEnv:USERPROFILE}\\.ssh", 
             "target": "/home/vscode/.ssh",
             "type": "bind",
             "consistency": "cached",
-            "condition": "!localEnv:SSH_AUTH_SOCK" // Mount only if SSH_AUTH_SOCK is NOT defined (Windows)
+            "condition": "!localEnv:SSH_AUTH_SOCK" 
         }
-    ],
-
-    // Comment out to connect to the Docker host
-    // "remoteUser": "root"
+    ]
 }
-

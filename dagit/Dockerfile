@@ -4,7 +4,8 @@ RUN mkdir -p /opt/dagster/dagster_home
 
 RUN pip install \
     dagster-webserver \
-    dagster-postgres
+    dagster-postgres \
+    dagster-docker
 
 ENV DAGSTER_HOME=/opt/dagster/dagster_home/
 

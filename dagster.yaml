@@ -42,7 +42,6 @@ run_launcher:
       volumes:
         - dagster_asset_storage:/opt/dagster/local/
         - /home/dagster/dagster-code/sports-code/:/opt/dagster/app
-        #- dagster_io_manager:/tmp/io_manager_storage
         - /var/run/docker.sock:/var/run/docker.sock
 
 run_coordinator:
