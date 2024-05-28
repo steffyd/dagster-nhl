@@ -72,7 +72,6 @@ services:
 
     depends_on:
       - dagster_psql
-      - dagster_code
 
     labels:
       # traefikv2
