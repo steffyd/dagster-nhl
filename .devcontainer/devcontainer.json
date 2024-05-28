@@ -14,7 +14,20 @@
     },
     "forwardPorts": [22],  
     "mounts": [
-        "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+        {
+            "source": "${localEnv:HOME}/.ssh", // macOS path
+            "target": "/home/vscode/.ssh",
+            "type": "bind",
+            "consistency": "cached",
+            "condition": "localEnv:SSH_AUTH_SOCK" // Mount only if SSH_AUTH_SOCK is defined (macOS)
+        },
+        {
+            "source": "${localEnv:USERPROFILE}\\.ssh",  // Windows path
+            "target": "/home/vscode/.ssh",
+            "type": "bind",
+            "consistency": "cached",
+            "condition": "!localEnv:SSH_AUTH_SOCK" // Mount only if SSH_AUTH_SOCK is NOT defined (Windows)
+        }
     ],
 
     // Comment out to connect to the Docker host
