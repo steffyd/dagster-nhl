@@ -1,9 +1,4 @@
-from dagster import DailyPartitionsDefinition
+from dagster import DailyPartitionsDefinition, WeeklyPartitionsDefinition
 
 
-nhl_daily_partition = DailyPartitionsDefinition(start_date="1990-08-01", timezone=f"US/Pacific")
-nhl_future_week_daily_partition = DailyPartitionsDefinition(
-    start_date="1990-08-01",
-    end_offset=7,
-    timezone=f"US/Pacific"
-)
+nhl_weekly_partition = WeeklyPartitionsDefinition(start_date="1990-09-04", timezone=f"US/Pacific")

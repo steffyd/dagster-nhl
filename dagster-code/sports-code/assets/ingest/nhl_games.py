@@ -1,12 +1,12 @@
 from dagster import asset, AssetExecutionContext, Output, BackfillPolicy
 import requests
-from ..partitions import nhl_daily_partition
+from ..partitions import nhl_weekly_partition
 from datetime import datetime
 import requests
 
 BASE_URL="https://api-web.nhle.com/v1/"
 
-@asset(partitions_def=nhl_daily_partition,
+@asset(partitions_def=nhl_weekly_partition,
        io_manager_key="partitioned_gcs_io_manager",
        output_required=False,
        group_name="nhl",
