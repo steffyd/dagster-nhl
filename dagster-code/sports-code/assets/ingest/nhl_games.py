@@ -13,21 +13,17 @@ def nhl_game_data(context: AssetExecutionContext):
     context.log.info(f'Getting game data for {len(dates)} days from {min(dates)} to {max(dates)}')
     
     for date in context.partition_keys:
-        try:
-            context.log.info(f'Getting game data for {date}')
-            url = f"{BASE_URL}schedule/{date}"
-            response = requests.get(url)
-            data = response.json()
-            # get gamePks from the schedule response
-            game_ids = (game['id'] for week in data['gameWeek'] for game in week['games'])
+        context.log.info(f'Getting game data for {date}')
+        url = f"{BASE_URL}schedule/{date}"
+        response = requests.get(url)
+        data = response.json()
+        # get gamePks from the schedule response
+        game_ids = (game['id'] for week in data['gameWeek'] for game in week['games'])
 
-            # now that we have the games for the day, get the game data
-            # and yield a dictionary of gameId to game data
-            game_data = {}
-            for game_id in game_ids:
-                context.log.info(f'Getting game data for {game_id}')
-                game_data[game_id] = requests.get(f'{BASE_URL}{game_id}/boxscore').json()
-            yield game_data
-        except Exception as e:
-            context.log.error(f'Error getting game data for {date}: {str(e)}')
-            yield None
+        # now that we have the games for the day, get the game data
+        # and yield a dictionary of gameId to game data
+        game_data = {}
+        for game_id in game_ids:
+            context.log.info(f'Getting game data for {game_id}')
+            game_data[game_id] = requests.get(f'{BASE_URL}{game_id}/boxscore').json()
+        yield game_data
