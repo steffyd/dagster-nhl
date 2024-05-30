@@ -6,11 +6,11 @@ class PartitionedGCSIOManager(ConfigurableIOManager):
     bucket: str
     client: GCSResource
 
-    def _get_blob(self, context, gameId):
+    def _get_blob(self, context, gameId, partition):
         # Include the partition in the blob path
         path = "/".join(context.asset_key.path)
-        if context.has_partition_key:
-            path += f"/{context.asset_partition_key}"
+        path += f"/{partition}/{gameId}.json"
+        context.log.info(f'Uploading game data to {path}')
         return self.client.get_client().bucket(self.bucket).blob(path)
     
     def _get_blobs(self, context):
@@ -29,9 +29,10 @@ class PartitionedGCSIOManager(ConfigurableIOManager):
         return game_data
     
     def handle_output(self, context: OutputContext, obj):
+        context.log.info(context.asset_key.path)
         # the object is a dictionary of gameIds, and the json of game data
         # we need to upload each game data as a json file with the path being
         # the date/gameId
-        for gameId, gameData in obj.items():
-            blob = self._get_blob(context, gameId)
-            blob.upload_from_string(json.dumps(gameData))
+        for partition, gameId, gameData in obj.items():
+            blob = self._get_blob(context, gameId, partition)
+            #blob.upload_from_string(json.dumps(gameData))
