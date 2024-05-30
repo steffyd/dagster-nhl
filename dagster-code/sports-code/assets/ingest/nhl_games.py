@@ -18,7 +18,7 @@ def nhl_game_data(context: AssetExecutionContext):
         response = requests.get(url)
         data = response.json()
         # get gamePks from the schedule response
-        game_ids = (game['id'] for week in data['gameWeek'] for game in week['games'])
+        game_ids = [game['id'] for week in data['gameWeek'] for game in week['games']]
 
         context.log.info(f'Getting game data for {len(game_ids)} games')
         # now that we have the games for the day, get the game data
