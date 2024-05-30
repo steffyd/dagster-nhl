@@ -10,7 +10,6 @@ class PartitionedGCSIOManager(ConfigurableIOManager):
         # Include the partition in the blob path
         path = "/".join(context.asset_key.path)
         path += f"/{partition}/{gameId}.json"
-        context.log.info(f'Uploading game data to bucket {self.bucket} at {path}')
         return self.client.get_client().bucket(self.bucket).blob(path)
     
     def _get_blobs(self, context):

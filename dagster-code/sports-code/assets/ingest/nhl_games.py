@@ -6,7 +6,7 @@ import requests
 
 BASE_URL="https://api-web.nhle.com/v1/"
 
-@asset(partitions_def=nhl_daily_partition, io_manager_key="partitioned_gcs_io_manager")
+@asset(partitions_def=nhl_daily_partition, io_manager_key="partitioned_gcs_io_manager", output_required=False)
 def nhl_game_data(context: AssetExecutionContext):
     # get the start and end partition as well as the total partition counts
     dates = [datetime.strptime(date_str, '%Y-%m-%d') for date_str in context.partition_keys]
@@ -16,6 +16,10 @@ def nhl_game_data(context: AssetExecutionContext):
         context.log.info(f'Getting game data for {date}')
         url = f"{BASE_URL}schedule/{date}"
         response = requests.get(url)
+        # check if the response is successful
+        if response.status_code != 200:
+            context.log.info(f'No data for partition {date}')
+            continue
         data = response.json()
         # get gamePks from the schedule response
         game_ids = [game['id'] for week in data['gameWeek'] for game in week['games']]
