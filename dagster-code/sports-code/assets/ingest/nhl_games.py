@@ -1,4 +1,4 @@
-from dagster import asset, AssetExecutionContext, Output
+from dagster import asset, AssetExecutionContext, Output, BackfillPolicy
 import requests
 from ..partitions import nhl_daily_partition
 from datetime import datetime
@@ -6,7 +6,13 @@ import requests
 
 BASE_URL="https://api-web.nhle.com/v1/"
 
-@asset(partitions_def=nhl_daily_partition, io_manager_key="partitioned_gcs_io_manager", output_required=False)
+@asset(partitions_def=nhl_daily_partition,
+       io_manager_key="partitioned_gcs_io_manager",
+       output_required=False,
+       group_name="nhl",
+       compute_kind="ingest",
+       tags={"source": "nhl",
+             "type": "ingest"})
 def nhl_game_data(context: AssetExecutionContext):
     # get the start and end partition as well as the total partition counts
     dates = [datetime.strptime(date_str, '%Y-%m-%d') for date_str in context.partition_keys]
