@@ -1,11 +1,13 @@
 FROM python:3.9-slim-buster
 
+ENV DOCKER_BUILDKIT=1
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     git \ 
     openssh-client \ 
-    cmake
+    cmake \
+    docker.io
 
 # Install Python packages
 RUN pip3 install --upgrade pip && \
@@ -18,5 +20,8 @@ RUN pip3 install --upgrade pip && \
     pyodbc \
     requests \
     xgboost
+
+# Enable experimental features for Docker-in-Docker
+RUN echo '{"experimental": true}' | tee /etc/docker/daemon.json
 
 ENV DAGSTER_HOME=/opt/dagster/dagster_home

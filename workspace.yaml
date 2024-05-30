@@ -1,6 +1,6 @@
 load_from:
   # Each entry here corresponds to a container that exposes a gRPC server.
   - grpc_server:
-      host: dagster_code
+      host: dagster-dagster_code-1
       port: 4000
       location_name: "sports-code"

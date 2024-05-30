@@ -1,7 +1,8 @@
 {
     "name": "Dagster Development",
     "build": {
-        "dockerfile": "../Dockerfile_base"
+        "dockerfile": "../Dockerfile_base",
+        "runArgs": [ "--secret", "id=dockerhub,src=dockerhub.env" ]
     },
     "extensions": [
         "ms-python.python",
@@ -30,6 +31,20 @@
             "type": "bind",
             "consistency": "cached",
             "condition": "!localEnv:SSH_AUTH_SOCK" 
+        },
+        {
+            "source": "${localEnv:HOME}/Library/Containers/com.docker.docker/Data/database/com.docker.driver.amd64-linux/etc/docker/daemon.json", // macOS path
+            "target": "/home/vscode/.docker/config.json",
+            "type": "bind",
+            "consistency": "cached",
+            "condition": "localEnv:SSH_AUTH_SOCK" // Mount only if SSH_AUTH_SOCK is defined (macOS)
+        },
+        {
+            "source": "${localEnv:USERPROFILE}\\.docker\\config.json", // Windows path
+            "target": "/home/vscode/.docker/config.json",
+            "type": "bind",
+            "consistency": "cached",
+            "condition": "!localEnv:SSH_AUTH_SOCK" // Mount only if SSH_AUTH_SOCK is NOT defined (Windows)
         }
     ]
 }

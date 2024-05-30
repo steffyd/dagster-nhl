@@ -64,6 +64,7 @@ __pypackages__/
 env/
 venv/
 ENV/
+.devcontainer/dockerhub.env
 
 # If you are using PyCharm # 
 .idea/**/workspace.xml 
