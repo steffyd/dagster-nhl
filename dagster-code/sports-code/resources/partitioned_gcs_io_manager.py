@@ -9,7 +9,7 @@ class PartitionedGCSIOManager(ConfigurableIOManager):
     def _get_blob(self, context, gameId):
         # Include the partition in the blob path
         path = "/".join(context.asset_key.path)
-        if context.partition:
+        if context.has_partition_key:
             path += f"/{context.asset_partition_key}"
         return self.client.get_client().bucket(self.bucket).blob(path)
     
