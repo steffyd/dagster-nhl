@@ -25,6 +25,5 @@ def nhl_game_data(context: AssetExecutionContext):
         # and yield a dictionary of gameId to game data
         game_data = {}
         for game_id in game_ids:
-            context.log.info(f'Getting game data from URL: {BASE_URL}gamecenter/{game_id}/boxscore')
             game_data[game_id] = requests.get(f'{BASE_URL}gamecenter/{game_id}/boxscore').json()
         yield Output(game_data)

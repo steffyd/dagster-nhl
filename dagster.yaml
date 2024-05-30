@@ -44,7 +44,7 @@ run_launcher:
         - dagster_asset_storage:/opt/dagster/local/
         - /home/dagster/dagster-code/sports-code/:/opt/dagster/app
         - /var/run/docker.sock:/var/run/docker.sock
-        - /home/gcp_creds.json:/opt/dagster/gcp_creds.json
+        - /home/gcp_creds.json:/opt/dagster/app/gcp_creds.json
 
 run_coordinator:
   module: dagster.core.run_coordinator
