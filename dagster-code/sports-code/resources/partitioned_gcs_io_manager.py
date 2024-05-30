@@ -26,6 +26,7 @@ class PartitionedGCSIOManager(ConfigurableIOManager):
         for blob in blobs:
             gameId = blob.name.split('/')[-1].split('.')[0]
             game_data[gameId] = json.loads(blob.download_as_string())
+        return game_data
     
     def handle_output(self, context: OutputContext, obj):
         # the object is a dictionary of gameIds, and the json of game data
