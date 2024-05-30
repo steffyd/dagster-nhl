@@ -36,6 +36,7 @@ run_launcher:
       - GCP_PRIVATE_KEY_ID
       - GCP_PRIVATE_KEY
       - GCP_CLIENT_ID
+      - GOOGLE_APPLICATION_CREDENTIALS
     networks:
       - dagster
     container_kwargs:
@@ -43,6 +44,7 @@ run_launcher:
         - dagster_asset_storage:/opt/dagster/local/
         - /home/dagster/dagster-code/sports-code/:/opt/dagster/app
         - /var/run/docker.sock:/var/run/docker.sock
+        - /home/gcp_creds.json:/opt/dagster/gcp_creds.json
 
 run_coordinator:
   module: dagster.core.run_coordinator
