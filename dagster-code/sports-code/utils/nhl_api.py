@@ -41,7 +41,7 @@ def get_schedule_expanded(date, context):
     return pd.DataFrame(schedule)
 
 
-def get_schedule(date, context):
+def get_schedule(date):
     url = f"{BASE_URL}schedule?date={date}"
     response = requests.get(url)
     data = response.json()
