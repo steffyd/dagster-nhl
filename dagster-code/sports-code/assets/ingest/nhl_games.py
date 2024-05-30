@@ -5,6 +5,7 @@ from utils.nhl_api import get_schedule, BASE_URL
 
 @asset(partitions_def=nhl_daily_partition, io_manager_key="partitioned_gcs_io_manager")
 def nhl_game_data(context: AssetExecutionContext):
+    context.log.info(context.partition_keys)
     for partitions in context.partition_keys:
         date = partitions['date']
         schedule = get_schedule(date)
