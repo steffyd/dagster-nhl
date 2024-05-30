@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 
-BASE_URL = "https://statsapi.web.nhl.com/api/v1/"
+BASE_URL = "https://api-web.nhle.com/v1/"
 
 
 def get_schedule_expanded(date, context):
