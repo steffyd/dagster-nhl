@@ -1,4 +1,4 @@
-from dagster import asset, AssetExecutionContext
+from dagster import asset, AssetExecutionContext, Output
 import requests
 from ..partitions import nhl_daily_partition
 from datetime import datetime
@@ -20,10 +20,11 @@ def nhl_game_data(context: AssetExecutionContext):
         # get gamePks from the schedule response
         game_ids = (game['id'] for week in data['gameWeek'] for game in week['games'])
 
+        context.log.info(f'Getting game data for {len(game_ids)} games')
         # now that we have the games for the day, get the game data
         # and yield a dictionary of gameId to game data
         game_data = {}
         for game_id in game_ids:
             context.log.info(f'Getting game data from URL: {BASE_URL}gamecenter/{game_id}/boxscore')
             game_data[game_id] = requests.get(f'{BASE_URL}gamecenter/{game_id}/boxscore').json()
-        yield game_data
+        yield Output(game_data)
