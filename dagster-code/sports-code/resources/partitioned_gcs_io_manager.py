@@ -29,10 +29,9 @@ class PartitionedGCSIOManager(ConfigurableIOManager):
         return game_data
     
     def handle_output(self, context: OutputContext, obj):
-        context.log.info(context.asset_key.path)
         # the object is a dictionary where the key is (date, gameId), and the json of game data
         # we need to upload each game data as a json file with the path being
         # the date/gameId
         for (partition, gameId), gameData in obj.items():
             blob = self._get_blob(context, gameId, partition)
-            #blob.upload_from_string(json.dumps(gameData))
+            blob.upload_from_string(json.dumps(gameData))
