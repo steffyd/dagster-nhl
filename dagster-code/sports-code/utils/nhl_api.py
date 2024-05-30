@@ -42,7 +42,7 @@ def get_schedule_expanded(date, context):
 
 
 def get_schedule(date):
-    url = f"{BASE_URL}schedule?date={date}"
+    url = f"{BASE_URL}schedule/{date}"
     response = requests.get(url)
     data = response.json()
     schedule = []
