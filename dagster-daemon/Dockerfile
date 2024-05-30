@@ -1,11 +1,12 @@
 FROM python:3.10-slim
 
+ARG DAGSTER_VERSION
 # Checkout and install dagster libraries needed to run the gRPC server
 # exposing your repository to dagit and dagster-daemon, and to load
 # the DagsterInstance
 
 RUN pip install \
-    dagster \
+    dagster=${DAGSTER_VERSION} \
     dagster-postgres \
     dagster-docker \
     sqlalchemy==1.4.46

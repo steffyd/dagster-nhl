@@ -17,18 +17,23 @@ if [[ $recreate_all == "y" ]]; then
     rebuild_all=true
 fi
 
+# set the Dagster version we want to use here
+dagster_version="DAGSTER_VERSION=1.7.7"
+
 # Check the user's input and rebuild the images accordingly
 if [[ $rebuild_all == true ]]; then
     # Rebuild all images
     echo "Recreating all images..."
     # Rebuild all images in the dagit and dagster-daemon folders
-    docker build --platform=linux/amd64 --no-cache -t steffyd/dagster_dagit:latest ./dagit
-    docker build --platform=linux/amd64 --no-cache -t steffyd/dagster_daemon:latest ./dagster-daemon
+    # use the dagster_version variable to set the Dagster version in the build-args
+    docker build --platform=linux/amd64 --no-cache -t steffyd/dagster_dagit:latest --build-arg $dagster_version ./dagit
+    docker build --platform=linux/amd64 --no-cache -t steffyd/dagster_daemon:latest --build-arg $dagster_version ./dagster-daemon
 fi
 # Always rebuild only the dagster-code image
 echo "Recreating dagster-code image..."
 # Rebuild the dagster-code image
-docker build --platform=linux/amd64 --no-cache -t steffyd/dagster_code:latest ./dagster-code
+# use the dagster_version variable to set the Dagster version in the build-args
+docker build --platform=linux/amd64 --no-cache -t steffyd/dagster_code:latest --build-arg $dagster_version ./dagster-code
 
 # Push the rebuilt images to the correct location
 echo "Pushing images to the correct location..."
