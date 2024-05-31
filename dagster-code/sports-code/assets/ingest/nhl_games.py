@@ -68,13 +68,10 @@ def nhl_game_data(context: AssetExecutionContext):
         compute_kind="python"
 )
 def latest_nhl_schema(context: AssetExecutionContext, nhl_game_data: dict):
-    # get the first game data to deduce the schema
-    game_id, game_data = nhl_game_data.popitem()
-    # convert game_data to json
-    game_data_json = json.dumps(game_data)
-    context.log.info(game_data_json)
+    # Get the first game data
+    game_id, game_data = next(iter(nhl_game_data.items()))
     generator = SchemaGenerator()
-    schema_map, error_logs = generator.deduce_schema(game_data_json)
+    schema_map, error_logs = generator.deduce_schema(game_data)
     schema = generator.flatten_schema(schema_map)
     context.log.info(schema)
     return schema
