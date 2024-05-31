@@ -15,8 +15,6 @@ RESOURCES = {
     "coc_slack_resource": coc_slack_resource,
     "bigquery": BigQueryResource(project=GCP_PROJECT_ID,
                                  gcp_credentials=EnvVar("GCP_CREDS")),
-    "bigquery_io_manager": BigQueryIOManager(project=GCP_PROJECT_ID,
-                                             gcp_credentials=EnvVar("GCP_CREDS")),
     "gcs": gcs_resource,
     "espn_api": EspnApiResource(),
     "partitioned_gcs_io_manager": PartitionedGCSIOManager(bucket='dagster-storage-raw-nhl-data', client=gcs_resource),
