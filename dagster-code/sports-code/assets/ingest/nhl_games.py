@@ -13,6 +13,7 @@ from ..partitions import nhl_weekly_partition
 from datetime import datetime
 import requests
 from bigquery_schema_generator.generate_schema import SchemaGenerator
+import json
 
 BASE_URL="https://api-web.nhle.com/v1/"
 
@@ -69,7 +70,8 @@ def nhl_game_data(context: AssetExecutionContext):
 def latest_nhl_schema(context: AssetExecutionContext, nhl_game_data: dict):
     # get the first game data to deduce the schema
     game_id, game_data = nhl_game_data.popitem()
-    context.log.info(game_data.__class__)
+    # convert game_data to json
+    game_data = json.dumps(game_data)
     generator = SchemaGenerator()
     schema_map, error_logs = generator.deduce_schema(game_data)
     schema = generator.flatten_schema(schema_map)
