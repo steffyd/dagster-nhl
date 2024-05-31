@@ -1,8 +1,7 @@
 {
     "name": "Dagster Development",
     "build": {
-        "dockerfile": "../Dockerfile_base",
-        "runArgs": [ "--secret", "id=dockerhub,src=dockerhub.env" ]
+        "dockerfile": "../Dockerfile_base"
     },
     "extensions": [
         "ms-python.python",
