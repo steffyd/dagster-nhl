@@ -1,10 +1,17 @@
-from dagster import asset, AssetExecutionContext, Output, FreshnessPolicy, AutoMaterializePolicy
+from dagster import asset, AssetExecutionContext, Output, FreshnessPolicy,AutoMaterializePolicy, AutoMaterializeRule
 import requests
 from ..partitions import nhl_weekly_partition
 from datetime import datetime
 import requests
 
 BASE_URL="https://api-web.nhle.com/v1/"
+
+materialize_on_cron_policy = AutoMaterializePolicy.eager().with_rules(
+    # try to materialize this asset if it hasn't been materialized since the last cron tick
+    AutoMaterializeRule.materialize_on_cron(cron_schedule="0 0 * * 0",  # Run at midnight on Sundays
+                                            timezone=f"US/Pacific"),
+)
+
 
 @asset(partitions_def=nhl_weekly_partition,
        io_manager_key="partitioned_gcs_io_manager",
@@ -14,14 +21,7 @@ BASE_URL="https://api-web.nhle.com/v1/"
        freshness_policy=FreshnessPolicy(
         maximum_lag_minutes=10080 # 7 days freshness
        ),  
-       auto_materialize_policy=AutoMaterializePolicy(
-           {
-               AutoMaterializePolicy.materialize_on_cron(
-                   cron_schedule="0 0 * * 0",  # Run at midnight on Sundays
-                   timezone=f"US/Pacific"
-               ),
-           }
-       )
+       auto_materialize_policy=materialize_on_cron_policy
 )
 def nhl_game_data(context: AssetExecutionContext):
     # get the start and end partition as well as the total partition counts
