@@ -1,6 +1,6 @@
 from dagster import asset, AssetExecutionContext, Output, FreshnessPolicy, AutoMaterializePolicy
 import requests
-from ..partitions import nhl_weekly_partition, LastPartitionMapping
+from ..partitions import nhl_weekly_partition
 from datetime import datetime
 import requests
 
@@ -16,9 +16,9 @@ BASE_URL="https://api-web.nhle.com/v1/"
        ),  
        auto_materialize_policy=AutoMaterializePolicy(
            {
-               AutoMaterializePolicy.materialize_on_schedule(
+               AutoMaterializePolicy.materialize_on_cron(
                    cron_schedule="0 0 * * 0",  # Run at midnight on Sundays
-                   partition_mapping=LastPartitionMapping()
+                   timezone=f"US/Pacific"
                ),
            }
        )
