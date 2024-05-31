@@ -27,7 +27,7 @@ materialize_on_cron_policy = AutoMaterializePolicy.eager().with_rules(
        io_manager_key="partitioned_gcs_io_manager",
        output_required=False,
        group_name="nhl",
-       compute_kind="ingest",
+       compute_kind="API",
        freshness_policy=FreshnessPolicy(
         maximum_lag_minutes=10080 # 7 days freshness
        ),  
@@ -62,7 +62,9 @@ def nhl_game_data(context: AssetExecutionContext):
 
 @asset(
         ins={"nhl_game_data": AssetIn(partition_mapping=LastPartitionMapping())},
-        auto_materialize_policy=AutoMaterializePolicy.eager()
+        auto_materialize_policy=AutoMaterializePolicy.eager(),
+        group_name="nhl",
+        compute_kind="python"
 )
 def latest_nhl_schema(context: AssetExecutionContext, nhl_game_data: dict):
     context.log.info(nhl_game_data)
