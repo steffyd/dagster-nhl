@@ -65,6 +65,7 @@ def nhl_game_data(context: AssetExecutionContext):
         auto_materialize_policy=AutoMaterializePolicy.eager()
 )
 def latest_nhl_schema(context: AssetExecutionContext, nhl_game_data: dict):
+    context.log.info(nhl_game_data)
     generator = SchemaGenerator()
     schema_map, error_logs = generator.deduce_schema(nhl_game_data[0])
     schema = generator.flatten_schema(schema_map)
