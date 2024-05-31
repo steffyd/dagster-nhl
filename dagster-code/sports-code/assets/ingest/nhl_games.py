@@ -1,4 +1,13 @@
-from dagster import asset, AssetExecutionContext, Output, FreshnessPolicy,AutoMaterializePolicy, AutoMaterializeRule, LastPartitionMapping
+from dagster import (
+    asset,
+    AssetExecutionContext,
+    Output,
+    FreshnessPolicy,
+    AutoMaterializePolicy,
+    AutoMaterializeRule,
+    LastPartitionMapping,
+    AssetIn
+)
 import requests
 from ..partitions import nhl_weekly_partition
 from datetime import datetime
@@ -52,7 +61,7 @@ def nhl_game_data(context: AssetExecutionContext):
         yield Output(game_data)
 
 @asset(
-        deps={"nhl_game_data": LastPartitionMapping},
+        ins={"nhl_game_data": AssetIn(partition_mapping=LastPartitionMapping())},
         auto_materialize_policy=AutoMaterializePolicy.eager()
 )
 def latest_nhl_schema(context: AssetExecutionContext, nhl_game_data: dict):

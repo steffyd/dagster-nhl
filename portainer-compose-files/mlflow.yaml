@@ -12,6 +12,15 @@ services:
     volumes:
       - /ssd-mlflow-01/mlruns:/mlruns/
       - /ssd-mlflow-01/mlartifacts:/mlartifacts/
+    
+    labels:
+      # traefikv2
+      - "traefik.enable=true"
+      - "traefik.http.routers.mlflow.tls=true"
+      - "traefik.http.routers.mlflow.rule=Host(`mlflow.corellianengineeringco.com`)"
+      - "traefik.http.routers.mlflow.tls.certresolver=le"
+      - "traefik.http.routers.mlflow.entrypoints=websecure"
+      - "traefik.http.services.mlflow.loadbalancer.server.port=80"
 
 networks:
   home_default:
