@@ -5,7 +5,7 @@ ARG DAGSTER_VERSION
 RUN mkdir -p /opt/dagster/dagster_home
 
 RUN pip install \
-    dagster-webserver=${DAGSTER_VERSION} \
+    dagster-webserver==${DAGSTER_VERSION} \
     dagster-postgres \
     dagster-docker
 

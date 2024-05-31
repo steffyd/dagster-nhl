@@ -6,7 +6,7 @@ ARG DAGSTER_VERSION
 # the DagsterInstance
 
 RUN pip install \
-    dagster=${DAGSTER_VERSION} \
+    dagster==${DAGSTER_VERSION} \
     dagster-postgres \
     dagster-docker \
     sqlalchemy==1.4.46
