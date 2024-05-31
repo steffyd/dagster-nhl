@@ -1,4 +1,4 @@
-from dagster import ConfigurableIOManager, OutputContext
+from dagster import ConfigurableIOManager, OutputContext, InputContext
 from dagster_gcp import GCSResource
 import json
 
@@ -14,9 +14,10 @@ class PartitionedGCSIOManager(ConfigurableIOManager):
     
     def _get_blobs(self, context):
         path = "/".join(context.asset_key.path)
+        path += f"/{context.asset_partition_key}/"
         return self.client.get_client().bucket(self.bucket).list_blobs(prefix=path)
 
-    def load_input(self, context):
+    def load_input(self, context: InputContext):
         # we have multiple game data files to load for any given date,
         # so we need to load all of them and return them as a dictionary
         # of gameId to game data

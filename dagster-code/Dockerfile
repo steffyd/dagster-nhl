@@ -23,7 +23,8 @@ RUN pip install \
     pandas \
     scikit-learn \
     dbt-bigquery \
-    yahoo_oauth
+    yahoo_oauth \
+    bigquery_schema_generator
 
 RUN apt-get update && apt-get install -y git openssh-client
 

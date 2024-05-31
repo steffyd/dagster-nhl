@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.11.3
+
+    networks:
+      - home_default
+
+    command: mlflow server --host 0.0.0.0 --port 80 --serve-artifacts
+
+    volumes:
+      - /ssd-mlflow-01/mlruns:/mlruns/
+      - /ssd-mlflow-01/mlartifacts:/mlartifacts/
+
+networks:
+  home_default:
+    name: home_default
+    external: true

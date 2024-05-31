@@ -3,7 +3,7 @@ from .postgres_partitioned_io_manager import postgres_partitioned_io_manager
 from .coc_slack_resource import coc_slack_resource
 from dagster import EnvVar
 from utils.constants import GCP_PROJECT_ID
-from dagster_gcp import BigQueryResource, GCSResource
+from dagster_gcp import BigQueryResource, GCSResource, BigQueryIOManager
 from .espn_api_resource import EspnApiResource
 from .partitioned_gcs_io_manager import PartitionedGCSIOManager
 
@@ -15,6 +15,8 @@ RESOURCES = {
     "coc_slack_resource": coc_slack_resource,
     "bigquery": BigQueryResource(project=GCP_PROJECT_ID,
                                  gcp_credentials=EnvVar("GCP_CREDS")),
+    "bigquery_io_manager": BigQueryIOManager(project=GCP_PROJECT_ID,
+                                             gcp_credentials=EnvVar("GCP_CREDS")),
     "gcs": gcs_resource,
     "espn_api": EspnApiResource(),
     "partitioned_gcs_io_manager": PartitionedGCSIOManager(bucket='dagster-storage-raw-nhl-data', client=gcs_resource),

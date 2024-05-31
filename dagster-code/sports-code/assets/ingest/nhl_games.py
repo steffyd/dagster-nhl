@@ -1,8 +1,9 @@
-from dagster import asset, AssetExecutionContext, Output, FreshnessPolicy,AutoMaterializePolicy, AutoMaterializeRule
+from dagster import asset, AssetExecutionContext, Output, FreshnessPolicy,AutoMaterializePolicy, AutoMaterializeRule, LastPartitionMapping
 import requests
 from ..partitions import nhl_weekly_partition
 from datetime import datetime
 import requests
+from bigquery_schema_generator.generate_schema import SchemaGenerator
 
 BASE_URL="https://api-web.nhle.com/v1/"
 
@@ -49,3 +50,14 @@ def nhl_game_data(context: AssetExecutionContext):
             
         context.log.info(f'Yielding game data for {len(game_data)} games on {date}')
         yield Output(game_data)
+
+@asset(
+        deps={"nhl_game_data": LastPartitionMapping},
+        auto_materialize_policy=AutoMaterializePolicy.eager()
+)
+def latest_nhl_schema(context: AssetExecutionContext, nhl_game_data: dict):
+    generator = SchemaGenerator()
+    schema_map, error_logs = generator.deduce_schema(nhl_game_data[0])
+    schema = generator.flatten_schema(schema_map)
+    context.log.info(schema)
+    return schema

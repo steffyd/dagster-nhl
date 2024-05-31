@@ -19,7 +19,8 @@ RUN pip3 install --upgrade pip && \
     dagster-gcp \
     pyodbc \
     requests \
-    xgboost
+    xgboost \
+    bigquery_schema_generator
 
 # Enable experimental features for Docker-in-Docker
 RUN echo '{"experimental": true}' | tee /etc/docker/daemon.json
