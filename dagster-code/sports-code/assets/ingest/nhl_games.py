@@ -1,6 +1,6 @@
-from dagster import asset, AssetExecutionContext, Output, BackfillPolicy
+from dagster import asset, AssetExecutionContext, Output, FreshnessPolicy, AutoMaterializePolicy
 import requests
-from ..partitions import nhl_weekly_partition
+from ..partitions import nhl_weekly_partition, LastPartitionMapping
 from datetime import datetime
 import requests
 
@@ -11,8 +11,18 @@ BASE_URL="https://api-web.nhle.com/v1/"
        output_required=False,
        group_name="nhl",
        compute_kind="ingest",
-       tags={"source": "nhl",
-             "type": "ingest"})
+       freshness_policy=FreshnessPolicy(
+        maximum_lag_minutes=10080 # 7 days freshness
+       ),  
+       auto_materialize_policy=AutoMaterializePolicy(
+           {
+               AutoMaterializePolicy.materialize_on_schedule(
+                   cron_schedule="0 0 * * 0",  # Run at midnight on Sundays
+                   partition_mapping=LastPartitionMapping()
+               ),
+           }
+       )
+)
 def nhl_game_data(context: AssetExecutionContext):
     # get the start and end partition as well as the total partition counts
     dates = [datetime.strptime(date_str, '%Y-%m-%d') for date_str in context.partition_keys]
