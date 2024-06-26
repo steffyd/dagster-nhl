@@ -69,7 +69,7 @@ def nhl_game_data(context: AssetExecutionContext):
 
 @asset(
     partitions_def=nhl_season_partition,
-    io_manager_key="big_query_io_manager",
+    io_manager_key="nhl_season_partitioned_bigquery_io_manager",
     group_name="nhl",
     compute_kind="Python",
     auto_materialize_policy=AutoMaterializePolicy.eager(),
