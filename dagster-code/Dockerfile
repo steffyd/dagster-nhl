@@ -22,7 +22,7 @@ RUN pip install \
     xgboost \
     pandas \
     scikit-learn \
-    dbt-bigquery \
+    dbt-bigquery
 
 RUN apt-get update && apt-get install -y git openssh-client
 

@@ -65,7 +65,8 @@ class SeasonPartitionMapping(PartitionMapping):
                             upstream_keys.add(week)
         
         return UpstreamPartitionsResult(
-            partitions_subset=upstream_partitions_def.empty_subset().with_partition_keys(upstream_keys)
+            partitions_subset=upstream_partitions_def.empty_subset().with_partition_keys(upstream_keys),
+            required_but_nonexistent_partition_keys=set(),
         )
 
 
