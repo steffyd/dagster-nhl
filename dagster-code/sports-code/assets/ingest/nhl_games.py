@@ -5,8 +5,6 @@ from dagster import (
     FreshnessPolicy,
     AutoMaterializePolicy,
     AutoMaterializeRule,
-    LastPartitionMapping,
-    AssetIn
 )
 import requests
 from ..partitions import nhl_weekly_partition
@@ -23,7 +21,7 @@ materialize_on_cron_policy = AutoMaterializePolicy.eager().with_rules(
 
 
 @asset(partitions_def=nhl_weekly_partition,
-       io_manager_key="partitioned_gcs_io_manager",
+       io_manager_key="raw_nhl_data_partitioned_gcs_io_manager",
        output_required=False,
        group_name="nhl",
        compute_kind="API",
@@ -33,6 +31,11 @@ materialize_on_cron_policy = AutoMaterializePolicy.eager().with_rules(
        auto_materialize_policy=materialize_on_cron_policy
 )
 def nhl_game_data(context: AssetExecutionContext):
+    """
+    This asset is the raw nhl game data for a given week. It is partitioned by weekly folders in GCS,
+    and the data is stored as a raw json file in GCS with the following structure:
+    dagster-storage-raw-nhl-data/nhl_game_data/{date}/{gameId}.json
+    """
     # get the start and end partition as well as the total partition counts
     dates = [datetime.strptime(date_str, '%Y-%m-%d') for date_str in context.partition_keys]
     context.log.info(f'Getting game data for {len(dates)} days from {min(dates)} to {max(dates)}')
@@ -63,17 +66,26 @@ def nhl_game_data(context: AssetExecutionContext):
         context.log.info(f'Yielding game data for {len(game_data)} games on {date}')
         yield Output(game_data)
 
-# @asset
-# def nhl_game_data_by_season(context: AssetExecutionContext, nhl_game_data):
-#     # get the season for each game in the nhl_game_data partitioned asset
-#     season_data = {}
-#     for game_id, game_data in nhl_game_data.items():
-#         season_data[game_id] = game_data['season']
-#     # get all distinct seasons
-#     seasons = set(season_data.values())
-#     # make sure that there is only one season in the data
-#     assert len(seasons) == 1, f"Data contains multiple seasons: {seasons}"
-#     season = seasons.pop()
-#     # now we want to load all the game_data into a bigquery table sharded by the season
-#     # so we yield a dictionary of season to game data
-#     yield Output({season: nhl_game_data})
+@asset(
+    group_name="nhl",
+    compute_kind="Python",
+    auto_materialize_policy=AutoMaterializePolicy.eager(),
+    ins=[nhl_game_data],
+)
+def nhl_game_data_by_season(context: AssetExecutionContext, nhl_game_data):
+    """
+    This asset is the raw nhl game data for a given season. It is stored in a bigquery table with the table name being:
+    nhl_game_data_{season}
+    """
+    # get the season for each game in the nhl_game_data partitioned asset
+    season_data = {}
+    for game_id, game_data in nhl_game_data.items():
+        season_data[game_id] = game_data['season']
+    # get all distinct seasons
+    seasons = set(season_data.values())
+    # make sure that there is only one season in the data
+    assert len(seasons) == 1, f"Data contains multiple seasons: {seasons}"
+    season = seasons.pop()
+    # now we want to load all the game_data into a bigquery table sharded by the season
+    # so we yield a dictionary of season to game data
+    yield Output({season: nhl_game_data})
