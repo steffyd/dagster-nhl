@@ -7,6 +7,7 @@ ARG DAGSTER_VERSION
 # the DagsterInstance
 
 RUN pip install \
+    numpy==1.26.4 \
     dagster==${DAGSTER_VERSION} \
     dagster-postgres \
     dagster-dbt \
@@ -15,17 +16,13 @@ RUN pip install \
     dagster-gcp \
     dagster-gcp-pandas \
     bigquery \
-    sqlalchemy==1.4.46
-
-RUN pip install \
+    sqlalchemy==1.4.46 \
     pyodbc \
     requests \
     xgboost \
     pandas \
     scikit-learn \
     dbt-bigquery \
-    yahoo_oauth \
-    bigquery_schema_generator
 
 RUN apt-get update && apt-get install -y git openssh-client
 
