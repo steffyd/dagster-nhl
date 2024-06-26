@@ -5,6 +5,7 @@ from dagster import (
     FreshnessPolicy,
     AutoMaterializePolicy,
     AutoMaterializeRule,
+    AssetIn
 )
 import requests
 from ..partitions import nhl_weekly_partition
@@ -70,7 +71,7 @@ def nhl_game_data(context: AssetExecutionContext):
     group_name="nhl",
     compute_kind="Python",
     auto_materialize_policy=AutoMaterializePolicy.eager(),
-    ins=[nhl_game_data],
+    ins={"nhl_game_data": AssetIn("nhl_game_data")},
 )
 def nhl_game_data_by_season(context: AssetExecutionContext, nhl_game_data):
     """
