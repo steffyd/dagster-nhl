@@ -73,7 +73,6 @@ def nhl_game_data(context: AssetExecutionContext):
     group_name="nhl",
     compute_kind="Python",
     auto_materialize_policy=AutoMaterializePolicy.eager(),
-    freshness_policy=FreshnessPolicy(maximum_lag_minutes=10080), # 7 days freshness
     ins={"nhl_game_data": AssetIn("nhl_game_data", partition_mapping=SeasonPartitionMapping())},
 )
 def nhl_game_data_by_season(context: AssetExecutionContext, nhl_game_data):
