@@ -1,5 +1,4 @@
 from .postgres_resource import postgres_resource_by_db
-from .postgres_partitioned_io_manager import postgres_partitioned_io_manager
 from .coc_slack_resource import coc_slack_resource
 from dagster import EnvVar
 from utils.constants import GCP_PROJECT_ID
@@ -13,7 +12,6 @@ bq_resource = BigQueryResource(project=GCP_PROJECT_ID, gcp_credentials=EnvVar("G
 
 RESOURCES = {
     "postgres_resource_by_db": postgres_resource_by_db,
-    "postgres_partitioned_io_manager": postgres_partitioned_io_manager,
     "coc_slack_resource": coc_slack_resource,
     "bigquery": bq_resource,
     "gcs": gcs_resource,
