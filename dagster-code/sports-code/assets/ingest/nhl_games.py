@@ -8,7 +8,7 @@ from dagster import (
     AssetIn
 )
 import requests
-from ..partitions import nhl_weekly_partition
+from ..partitions import nhl_weekly_partition, nhl_season_partition
 from datetime import datetime
 import requests
 
@@ -68,9 +68,12 @@ def nhl_game_data(context: AssetExecutionContext):
         yield Output(game_data)
 
 @asset(
+    partitions_def=nhl_season_partition,
+    io_manager_key="big_query_io_manager",
     group_name="nhl",
     compute_kind="Python",
     auto_materialize_policy=AutoMaterializePolicy.eager(),
+    freshness_policy=FreshnessPolicy(maximum_lag_minutes=10080), # 7 days freshness
     ins={"nhl_game_data": AssetIn("nhl_game_data")},
 )
 def nhl_game_data_by_season(context: AssetExecutionContext, nhl_game_data):
@@ -87,6 +90,9 @@ def nhl_game_data_by_season(context: AssetExecutionContext, nhl_game_data):
     # make sure that there is only one season in the data
     assert len(seasons) == 1, f"Data contains multiple seasons: {seasons}"
     season = seasons.pop()
+    if season not in context.instance.get_dynamic_partitions(nhl_season_partition.name):
+        context.log.info(f"Creating partition for season {season}")
+        context.instance.add_dynamic_partition(nhl_season_partition.name, season)
     # now we want to load all the game_data into a bigquery table sharded by the season
     # so we yield a dictionary of season to game data
     yield Output({season: nhl_game_data})

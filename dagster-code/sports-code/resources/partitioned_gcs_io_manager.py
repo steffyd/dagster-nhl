@@ -19,13 +19,12 @@ class PartitionedGCSIOManager(ConfigurableIOManager):
 
     def load_input(self, context: InputContext):
         # we have multiple game data files to load for any given date,
-        # so we need to load all of them and return them as a dictionary
-        # of gameId to game data
+        # lets return the gcs blob for each gameId
         blobs = self._get_blobs(context)
         game_data = {}
         for blob in blobs:
             gameId = blob.name.split('/')[-1].split('.')[0]
-            game_data[gameId] = json.loads(blob.download_as_string())
+            game_data[(context.asset_partition_key, gameId)] = json.loads(blob.download_as_string())
         return game_data
     
     def handle_output(self, context: OutputContext, obj):

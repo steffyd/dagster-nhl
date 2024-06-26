@@ -18,4 +18,5 @@ RESOURCES = {
     "gcs": gcs_resource,
     "espn_api": EspnApiResource(),
     "raw_nhl_data_partitioned_gcs_io_manager": PartitionedGCSIOManager(bucket='dagster-storage-raw-nhl-data', client=gcs_resource),
+    "big_query_io_manager": BigQueryIOManager(project=GCP_PROJECT_ID),
 }
