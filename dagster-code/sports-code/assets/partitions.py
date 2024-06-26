@@ -1,10 +1,41 @@
 from dagster import WeeklyPartitionsDefinition, DynamicPartitionsDefinition, PartitionMapping
-from dagster._core.definitions.partition_mapping import UpstreamPartitionsResult
+from dagster._core.definitions.partition_mapping import UpstreamPartitionsResult, PartitionsSubset
 import datetime
 import requests
 
 
 class SeasonPartitionMapping(PartitionMapping):
+    def description(self):
+        return "Map NHL weekly partitions to NHL season partitions"
+
+    def get_downstream_partitions_for_partitions(
+        self,
+        upstream_partitions_subset,
+        upstream_partitions_def,
+        downstream_partitions_def,
+        current_time = None,
+        dynamic_partitions_store = None,
+    ):
+        url = "https://api.nhle.com/stats/rest/en/season"
+        response = requests.get(url)
+        if response.status_code != 200:
+            raise Exception("Failed to get season data")
+        data = response.json()
+        downstream_keys = set()
+        for week in upstream_partitions_subset.get_partition_keys():
+            week_date = datetime.datetime.strptime(week, "%Y-%m-%d")
+            # get all ids and startDate and endDate for each value in the data array
+            for season_data in data["data"]:
+                # add to the upstream_keys the weeks that are in between the start and end date
+                # for the given season
+                start_date = datetime.datetime.strptime(season_data["startDate"], "%Y-%m-%d")
+                end_date = datetime.datetime.strptime(season_data["endDate"], "%Y-%m-%d")
+                if start_date <= week_date <= end_date:
+                    downstream_keys.add(season_data["id"])
+                    continue
+                            
+        return downstream_partitions_def.empty_subset().with_partition_keys(downstream_keys)
+
     def get_upstream_partitions_for_partition_range(
         self,
         downstream_partitions_subset,
