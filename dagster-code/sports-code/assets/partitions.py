@@ -1,7 +1,5 @@
-from dagster import WeeklyPartitionsDefinition, DynamicPartitionsDefinition
-from dagster import PartitionMapping, PartitionsDefinition, PartitionsSubset, UpstreamPartitionsResult
-from dagster.core.storage.dynamic import DynamicPartitionsStore
-from typing import Optional
+from dagster import WeeklyPartitionsDefinition, DynamicPartitionsDefinition, PartitionMapping
+from dagster._core.definitions.partition_mapping import UpstreamPartitionsResult
 import datetime
 import requests
 
@@ -9,12 +7,12 @@ import requests
 class SeasonPartitionMapping(PartitionMapping):
     def get_upstream_partitions_for_partition_range(
         self,
-        downstream_partitions_subset: PartitionsSubset,
-        downstream_partitions_def: PartitionsDefinition,
-        upstream_partitions_def: PartitionsDefinition,
-        current_time: Optional[datetime.datetime] = None,
-        dynamic_partitions_store: Optional[DynamicPartitionsStore] = None,
-    ) -> UpstreamPartitionsResult:
+        downstream_partitions_subset,
+        downstream_partitions_def,
+        upstream_partitions_def,
+        current_time = None,
+        dynamic_partitions_store = None,
+    ) :
         # Map downstream partitions to upstream partitions based on the season value
         upstream_keys = set()
         for season in downstream_partitions_subset.get_partition_keys():
