@@ -36,7 +36,7 @@ class SeasonPartitionMapping(PartitionMapping):
                             
         return downstream_partitions_def.empty_subset().with_partition_keys(downstream_keys)
 
-    def get_upstream_partitions_for_partition_range(
+    def get_upstream_mapped_partitions_result_for_partitions(
         self,
         downstream_partitions_subset,
         downstream_partitions_def,
