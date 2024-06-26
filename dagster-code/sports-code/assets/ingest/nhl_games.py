@@ -8,7 +8,7 @@ from dagster import (
     AssetIn
 )
 import requests
-from ..partitions import nhl_weekly_partition, nhl_season_partition
+from ..partitions import nhl_weekly_partition, nhl_season_partition, SeasonPartitionMapping
 from datetime import datetime
 import requests
 
@@ -74,7 +74,7 @@ def nhl_game_data(context: AssetExecutionContext):
     compute_kind="Python",
     auto_materialize_policy=AutoMaterializePolicy.eager(),
     freshness_policy=FreshnessPolicy(maximum_lag_minutes=10080), # 7 days freshness
-    ins={"nhl_game_data": AssetIn("nhl_game_data")},
+    ins={"nhl_game_data": AssetIn("nhl_game_data", partition_mapping=SeasonPartitionMapping())},
 )
 def nhl_game_data_by_season(context: AssetExecutionContext, nhl_game_data):
     """
