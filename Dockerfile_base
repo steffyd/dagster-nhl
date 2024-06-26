@@ -1,5 +1,7 @@
 FROM python:3.9-slim-buster
 
+ARG DAGSTER_VERSION
+
 ENV DOCKER_BUILDKIT=1
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -12,7 +14,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install Python packages
 RUN pip3 install --upgrade pip && \
     pip3 install \
-    dagster \
+    dagster==${DAGSTER_VERSION} \
+    dagster-webserver==${DAGSTER_VERSION} \
     dagster-dbt \
     dagster-docker \
     dagster-slack \
@@ -25,4 +28,4 @@ RUN pip3 install --upgrade pip && \
 # Enable experimental features for Docker-in-Docker
 RUN echo '{"experimental": true}' | tee /etc/docker/daemon.json
 
-ENV DAGSTER_HOME=/opt/dagster/dagster_home
+ENV DAGSTER_HOME=/workspaces/dagster-nhl/dagster-code/sports-code

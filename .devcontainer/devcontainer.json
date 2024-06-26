@@ -1,7 +1,10 @@
 {
     "name": "Dagster Development",
     "build": {
-        "dockerfile": "../Dockerfile_base"
+        "dockerfile": "../Dockerfile_base",
+        "args": {
+            "DAGSTER_VERSION": "1.7.7"
+        }
     },
     "extensions": [
         "ms-python.python",

@@ -12,8 +12,6 @@ import requests
 from ..partitions import nhl_weekly_partition
 from datetime import datetime
 import requests
-from bigquery_schema_generator.generate_schema import SchemaGenerator
-import json
 
 BASE_URL="https://api-web.nhle.com/v1/"
 
@@ -56,24 +54,26 @@ def nhl_game_data(context: AssetExecutionContext):
         # and yield a dictionary of gameId to game data
         game_data = {}
         for game_id in game_ids:
-            game_data[(date,game_id)] = requests.get(f'{BASE_URL}gamecenter/{game_id}/boxscore').json()
+            try:
+                game_data[(date,game_id)] = requests.get(f'{BASE_URL}gamecenter/{game_id}/boxscore').json()
+            except:
+                context.log.info(f'Error getting game data for {game_id}')
+                context.log.info(requests.get(f'{BASE_URL}gamecenter/{game_id}/boxscore'))
             
         context.log.info(f'Yielding game data for {len(game_data)} games on {date}')
         yield Output(game_data)
 
-@asset(
-        ins={"nhl_game_data": AssetIn(partition_mapping=LastPartitionMapping())},
-        auto_materialize_policy=AutoMaterializePolicy.eager(),
-        group_name="nhl",
-        compute_kind="python"
-)
-def latest_nhl_schema(context: AssetExecutionContext, nhl_game_data: dict):
-    # Get the first game data
-    game_id, game_data = next(iter(nhl_game_data.items()))
-    json_game_data = json.dumps(game_data).strip()
-    context.log.info(json_game_data)
-    generator = SchemaGenerator()
-    schema_map, error_logs = generator.deduce_schema(json_game_data)
-    schema = generator.flatten_schema(schema_map)
-    context.log.info(schema)
-    return schema
+# @asset
+# def nhl_game_data_by_season(context: AssetExecutionContext, nhl_game_data):
+#     # get the season for each game in the nhl_game_data partitioned asset
+#     season_data = {}
+#     for game_id, game_data in nhl_game_data.items():
+#         season_data[game_id] = game_data['season']
+#     # get all distinct seasons
+#     seasons = set(season_data.values())
+#     # make sure that there is only one season in the data
+#     assert len(seasons) == 1, f"Data contains multiple seasons: {seasons}"
+#     season = seasons.pop()
+#     # now we want to load all the game_data into a bigquery table sharded by the season
+#     # so we yield a dictionary of season to game data
+#     yield Output({season: nhl_game_data})
