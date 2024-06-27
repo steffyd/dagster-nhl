@@ -11,6 +11,7 @@ import requests
 from ..partitions import nhl_weekly_partition, nhl_season_partition, SeasonPartitionMapping
 from datetime import datetime
 import requests
+import json
 
 BASE_URL="https://api-web.nhle.com/v1/"
 
@@ -89,7 +90,13 @@ def nhl_game_data_by_season(context: AssetExecutionContext, nhl_game_data):
     seasons = set(season_data.values())
     # make sure that there is only one season in the data
     assert len(seasons) == 1, f"Data contains multiple seasons or no seasons: {seasons}"
-    season = seasons.pop()
+    # nhl_game_data.items() has the json data for each game. we want to combine each of those items into a single
+    # json array that we then load to bigquery
+    nhl_game_data_json_array = []
+    for game_id, game_data in nhl_game_data.items():
+        nhl_game_data_json_array.append(game_data)
+    # turn the array to a json object
+    nhl_game_data_json = json.dumps(nhl_game_data_json_array)
     # now we want to load all the game_data into a bigquery table sharded by the season
     # so we yield a dictionary of season to game data
-    yield Output({season: nhl_game_data})
+    yield Output(nhl_game_data_json)

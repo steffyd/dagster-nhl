@@ -20,6 +20,7 @@ class SeasonPartitionedBigQueryIOManager(ConfigurableIOManager):
             # client is a google.cloud.bigquery.Client
             # table name is {asset_key}_{partition_key}
             table_id = f"{self.project_name}.{'.'.join(context.asset_key.path)}_{context.asset_partition_key}"
+            context.log.info(f"Writing to {table_id}")
             job_config = bigquery.LoadJobConfig(
                 autodetect=True,
                 write_disposition="WRITE_TRUNCATE",
