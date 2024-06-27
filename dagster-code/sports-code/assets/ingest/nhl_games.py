@@ -89,9 +89,6 @@ def nhl_game_data_by_season(context: AssetExecutionContext, nhl_game_data):
     # make sure that there is only one season in the data
     assert len(seasons) == 1, f"Data contains multiple seasons or no seasons: {seasons}"
     season = seasons.pop()
-    if season not in context.instance.get_dynamic_partitions(nhl_season_partition.name):
-        context.log.info(f"Creating partition for season {season}")
-        context.instance.add_dynamic_partition(nhl_season_partition.name, season)
     # now we want to load all the game_data into a bigquery table sharded by the season
     # so we yield a dictionary of season to game data
     yield Output({season: nhl_game_data})
