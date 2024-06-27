@@ -1,13 +1,13 @@
-from dagster import schedule, ScheduleEvaluationContext
+from dagster import sensor, SensorEvaluationContext
 from assets.partitions import nhl_season_partition
 import requests
 
-@schedule(
-    cron_schedule="0 6 * * *"
+@sensor(
+    minimum_interval_seconds=86400 # 1 day interval
 )
-def update_nhl_season_partitions(context: ScheduleEvaluationContext):
+def update_nhl_season_partitions(context: SensorEvaluationContext):
     """
-    Schedule to update NHL season partitions with new seasons
+    Sensor to update NHL season partitions with new seasons
     """
     url = "https://api.nhle.com/stats/rest/en/season"
     response = requests.get(url)
