@@ -1,6 +1,6 @@
 from dagster import ConfigurableIOManager
 from dagster_gcp import BigQueryResource
-from bigquery import LoadJobConfig
+import bigquery
 
 class SeasonPartitionedBigQueryIOManager(ConfigurableIOManager):
     bq_resource: BigQueryResource
@@ -21,7 +21,7 @@ class SeasonPartitionedBigQueryIOManager(ConfigurableIOManager):
             # client is a google.cloud.bigquery.Client
             # table name is {asset_key}_{partition_key}
             table_id = f"{context.asset_key}_{context.asset_partition_key}"
-            job_config = LoadJobConfig(
+            job_config = bigquery.LoadJobConfig(
                 autodetect=True,
                 write_disposition="WRITE_TRUNCATE",
             )
