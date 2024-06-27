@@ -27,7 +27,7 @@ class SeasonPartitionedBigQueryIOManager(ConfigurableIOManager):
             )
             try:
                 job = client.load_table_from_json(obj, table_id, job_config=job_config)
+                job.result()
             except Exception as e:
                 context.log.info(obj)
                 raise e
-            job.result()

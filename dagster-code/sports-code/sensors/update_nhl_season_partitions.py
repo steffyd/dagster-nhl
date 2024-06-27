@@ -3,7 +3,8 @@ from assets.partitions import nhl_season_partition
 import requests
 
 @sensor(
-    minimum_interval_seconds= 60 # every minute cuz fuggit
+    # run daily
+    minimum_interval_seconds=86400
 )
 def update_nhl_season_partitions(context: SensorEvaluationContext):
     """
