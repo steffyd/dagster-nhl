@@ -30,9 +30,10 @@ def update_nhl_season_partitions(context: SensorEvaluationContext):
 
 
     context.log.info(f"Adding {len(new_seasons)} season partitions")
+    context.log.info(f"Deleting {len(bad_seasons)} season partitions")
     return SensorResult(
         dynamic_partitions_requests=[
             nhl_season_partition.build_add_request(new_seasons),
-            nhl_season_partition.build_remove_request(bad_seasons)
+            nhl_season_partition.build_delete_request(bad_seasons)
         ],
     )
