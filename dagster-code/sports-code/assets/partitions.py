@@ -57,10 +57,10 @@ class SeasonPartitionMapping(PartitionMapping):
                 # add to the upstream_keys the weeks that are in between the start and end date
                 # for the given season
                 if str(season_data["id"]) == season:
-                    start_date = datetime.datetime.strptime(season_data["startDate"], "%Y-%m-%d")
-                    end_date = datetime.datetime.strptime(season_data["endDate"], "%Y-%m-%d")
+                    start_date = datetime.datetime.strptime(season_data["startDate"], "%Y-%m-%d").date()
+                    end_date = datetime.datetime.strptime(season_data["endDate"], "%Y-%m-%d").date()
                     for week in upstream_partitions_def.get_partition_keys():
-                        week_date = datetime.datetime.strptime(week, "%Y-%m-%d")
+                        week_date = datetime.datetime.strptime(week, "%Y-%m-%d").date()
                         if start_date <= week_date <= end_date:
                             upstream_keys.add(week)
         
