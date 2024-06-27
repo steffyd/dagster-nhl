@@ -95,8 +95,7 @@ def nhl_game_data_by_season(context: AssetExecutionContext, nhl_game_data):
     nhl_game_data_json_array = []
     for game_id, game_data in nhl_game_data.items():
         nhl_game_data_json_array.append(game_data)
-    # turn the array to a json object
-    nhl_game_data_json = json.dumps(nhl_game_data_json_array)
+    
     # now we want to load all the game_data into a bigquery table sharded by the season
     # so we yield a dictionary of season to game data
-    yield Output(nhl_game_data_json)
+    yield Output(nhl_game_data_json_array)
