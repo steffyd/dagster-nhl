@@ -20,9 +20,6 @@ class PartitionedGCSIOManager(ConfigurableIOManager):
     def load_input(self, context: InputContext):
         # check the number of partitions we're trying to load
         game_data = {}
-        context.log.info(f"Loading {len(context.upstream_output.asset_partition_keys)} partitions")
-        context.log.info(f"Starting partition: {context.upstream_output.asset_partition_keys[0]}")
-        context.log.info(f"Ending partition: {context.upstream_output.asset_partition_keys[-1]}")
         for partition_key in context.upstream_output.asset_partition_keys:
             # we have multiple game data files to load for any given date,
             # lets return the gcs blob for each gameId
