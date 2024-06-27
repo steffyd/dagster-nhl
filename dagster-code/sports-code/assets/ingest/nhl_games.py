@@ -87,7 +87,7 @@ def nhl_game_data_by_season(context: AssetExecutionContext, nhl_game_data):
     # get all distinct seasons
     seasons = set(season_data.values())
     # make sure that there is only one season in the data
-    assert len(seasons) == 1, f"Data contains multiple seasons: {seasons}"
+    assert len(seasons) == 1, f"Data contains multiple seasons or no seasons: {seasons}"
     season = seasons.pop()
     if season not in context.instance.get_dynamic_partitions(nhl_season_partition.name):
         context.log.info(f"Creating partition for season {season}")
