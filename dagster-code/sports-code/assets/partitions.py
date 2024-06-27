@@ -1,4 +1,4 @@
-from dagster import WeeklyPartitionsDefinition, DynamicPartitionsDefinition, PartitionMapping
+from dagster import WeeklyPartitionsDefinition, DynamicPartitionsDefinition, PartitionMapping, DagsterInstance
 from dagster._core.definitions.partition_mapping import UpstreamPartitionsResult, PartitionsSubset
 import datetime
 import requests
@@ -32,6 +32,7 @@ class SeasonPartitionMapping(PartitionMapping):
                 end_date = datetime.datetime.strptime(season_data["endDate"], "%Y-%m-%d")
                 if start_date <= week_date <= end_date:
                     downstream_keys.add(season_data["id"])
+                    DagsterInstance.get().add_dynamic_partition(downstream_partitions_def.name, season_data["id"])
                     continue
                             
         return downstream_partitions_def.empty_subset().with_partition_keys(downstream_keys)
