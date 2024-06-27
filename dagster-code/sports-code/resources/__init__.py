@@ -8,7 +8,7 @@ from .partitioned_gcs_io_manager import PartitionedGCSIOManager
 from .season_partitioned_bigquery_io_manager import SeasonPartitionedBigQueryIOManager
 
 gcs_resource = GCSResource(project=GCP_PROJECT_ID)
-bq_resource = BigQueryResource(project=GCP_PROJECT_ID, gcp_credentials=EnvVar("GCP_CREDS"))
+bq_resource = BigQueryResource(project=GCP_PROJECT_ID)
 
 RESOURCES = {
     "postgres_resource_by_db": postgres_resource_by_db,
