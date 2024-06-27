@@ -22,10 +22,17 @@ def update_nhl_season_partitions(context: SensorEvaluationContext):
             context.log.info(f"Adding season partition {season_id}")
             new_seasons.append(str(season_id))
 
+    bad_seasons = []
+    for season in context.instance.get_dynamic_partitions(nhl_season_partition.name):
+        if int(season) < 19901991:
+            context.log.info(f"Removing season partition {season}")
+            bad_seasons.append(season)
+
 
     context.log.info(f"Adding {len(new_seasons)} season partitions")
     return SensorResult(
         dynamic_partitions_requests=[
-            nhl_season_partition.build_add_request(new_seasons)
+            nhl_season_partition.build_add_request(new_seasons),
+            nhl_season_partition.build_remove_request(bad_seasons)
         ],
     )
