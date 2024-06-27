@@ -1,6 +1,6 @@
 from dagster import ConfigurableIOManager
 from dagster_gcp import BigQueryResource
-import bigquery
+from google.cloud import bigquery
 
 class SeasonPartitionedBigQueryIOManager(ConfigurableIOManager):
     bq_resource: BigQueryResource
