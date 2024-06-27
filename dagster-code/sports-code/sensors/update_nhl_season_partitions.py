@@ -1,4 +1,4 @@
-from dagster import sensor, SensorEvaluationContext
+from dagster import sensor, SensorEvaluationContext, SensorResult
 from assets.partitions import nhl_season_partition
 import requests
 
@@ -15,8 +15,17 @@ def update_nhl_season_partitions(context: SensorEvaluationContext):
         raise Exception("Failed to get season data")
     data = response.json()
     season_ids = [season["id"] for season in data["data"]]
-    context.log.info(f"Adding {len(season_ids)} season partitions")
+
+    new_seasons = []
     for season_id in season_ids:
         if season_id not in context.instance.get_dynamic_partitions(nhl_season_partition.name):
             context.log.info(f"Adding season partition {season_id}")
-            context.instance.add_dynamic_partition(nhl_season_partition.name, season_id)
+            new_seasons.append(season_id)
+
+
+    context.log.info(f"Adding {len(new_seasons)} season partitions")
+    return SensorResult(
+        dynamic_partitions_requests=[
+            nhl_season_partition.build_add_request(new_seasons)
+        ],
+    )
