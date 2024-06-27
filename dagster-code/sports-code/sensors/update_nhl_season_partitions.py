@@ -18,7 +18,7 @@ def update_nhl_season_partitions(context: SensorEvaluationContext):
 
     new_seasons = []
     for season_id in season_ids:
-        if str(season_id) not in context.instance.get_dynamic_partitions(nhl_season_partition.name):
+        if str(season_id) not in context.instance.get_dynamic_partitions(nhl_season_partition.name) and season_id >= 19901991:
             context.log.info(f"Adding season partition {season_id}")
             new_seasons.append(str(season_id))
 
