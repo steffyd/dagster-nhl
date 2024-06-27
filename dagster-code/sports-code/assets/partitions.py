@@ -31,8 +31,7 @@ class SeasonPartitionMapping(PartitionMapping):
                 start_date = datetime.datetime.strptime(season_data["startDate"], "%Y-%m-%d")
                 end_date = datetime.datetime.strptime(season_data["endDate"], "%Y-%m-%d")
                 if start_date <= week_date <= end_date:
-                    downstream_keys.add(season_data["id"])
-                    DagsterInstance.get().add_dynamic_partition(downstream_partitions_def.name, season_data["id"])
+                    downstream_keys.add(str(season_data["id"]))
                     continue
                             
         return downstream_partitions_def.empty_subset().with_partition_keys(downstream_keys)
@@ -57,7 +56,7 @@ class SeasonPartitionMapping(PartitionMapping):
             for season_data in data["data"]:
                 # add to the upstream_keys the weeks that are in between the start and end date
                 # for the given season
-                if season_data["id"] == season:
+                if str(season_data["id"]) == season:
                     start_date = datetime.datetime.strptime(season_data["startDate"], "%Y-%m-%d")
                     end_date = datetime.datetime.strptime(season_data["endDate"], "%Y-%m-%d")
                     for week in upstream_partitions_def.get_partition_keys():
