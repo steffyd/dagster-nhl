@@ -25,5 +25,9 @@ class SeasonPartitionedBigQueryIOManager(ConfigurableIOManager):
                 autodetect=True,
                 write_disposition="WRITE_TRUNCATE",
             )
-            job = client.load_table_from_json(obj, table_id, job_config=job_config)
+            try:
+                job = client.load_table_from_json(obj, table_id, job_config=job_config)
+            except Exception as e:
+                context.log.info(obj)
+                raise e
             job.result()
