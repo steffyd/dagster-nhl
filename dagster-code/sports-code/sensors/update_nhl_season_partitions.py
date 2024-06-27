@@ -20,7 +20,7 @@ def update_nhl_season_partitions(context: SensorEvaluationContext):
     for season_id in season_ids:
         if season_id not in context.instance.get_dynamic_partitions(nhl_season_partition.name):
             context.log.info(f"Adding season partition {season_id}")
-            new_seasons.append(season_id)
+            new_seasons.append(str(season_id))
 
 
     context.log.info(f"Adding {len(new_seasons)} season partitions")
