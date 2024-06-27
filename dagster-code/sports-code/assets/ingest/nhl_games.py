@@ -74,6 +74,7 @@ def nhl_game_data(context: AssetExecutionContext):
     compute_kind="Python",
     auto_materialize_policy=AutoMaterializePolicy.eager(),
     ins={"nhl_game_data": AssetIn("nhl_game_data", partition_mapping=SeasonPartitionMapping())},
+    key_prefix=["nhl_lake"]
 )
 def nhl_game_data_by_season(context: AssetExecutionContext, nhl_game_data):
     """
