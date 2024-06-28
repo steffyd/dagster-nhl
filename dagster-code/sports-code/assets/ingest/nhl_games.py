@@ -5,7 +5,8 @@ from dagster import (
     FreshnessPolicy,
     AutoMaterializePolicy,
     AutoMaterializeRule,
-    AssetIn
+    AssetIn,
+    BackfillPolicy
 )
 import requests
 from ..partitions import nhl_weekly_partition, nhl_season_partition, SeasonPartitionMapping
@@ -74,6 +75,7 @@ def nhl_game_data(context: AssetExecutionContext):
     group_name="nhl",
     compute_kind="Python",
     auto_materialize_policy=AutoMaterializePolicy.eager(),
+    backfill_policy=BackfillPolicy.single_run(),
     ins={"nhl_game_data": AssetIn("nhl_game_data", partition_mapping=SeasonPartitionMapping())},
     key_prefix=["nhl_lake"]
 )
