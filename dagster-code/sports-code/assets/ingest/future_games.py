@@ -10,13 +10,7 @@ import requests
 from datetime import datetime
 from ..partitions import nhl_weekly_partition
 from unittest.mock import patch, MagicMock
-
-BASE_URL = "https://api-web.nhle.com/v1/"
-
-materialize_on_cron_policy = AutoMaterializePolicy.eager().with_rules(
-    AutoMaterializeRule.materialize_on_cron(cron_schedule="0 0 * * 0",  # Run at midnight on Sundays
-                                            timezone="US/Pacific"),
-)
+from nhl_games import BASE_URL, materialize_on_cron_policy
 
 @asset(
     partitions_def=nhl_weekly_partition,
