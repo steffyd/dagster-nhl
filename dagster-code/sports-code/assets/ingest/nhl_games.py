@@ -23,15 +23,16 @@ materialize_on_cron_policy = AutoMaterializePolicy.eager().with_rules(
 )
 
 
-@asset(partitions_def=nhl_weekly_partition,
-       io_manager_key="raw_nhl_data_partitioned_gcs_io_manager",
-       output_required=False,
-       group_name="nhl",
-       compute_kind="API",
-       freshness_policy=FreshnessPolicy(
+@asset(
+    partitions_def=nhl_weekly_partition,
+    io_manager_key="raw_nhl_data_partitioned_gcs_io_manager",
+    output_required=False,
+    group_name="nhl_ingest",
+    compute_kind="API",
+    freshness_policy=FreshnessPolicy(
         maximum_lag_minutes=10080 # 7 days freshness
-       ),  
-       auto_materialize_policy=materialize_on_cron_policy
+    ),  
+    auto_materialize_policy=materialize_on_cron_policy
 )
 def nhl_game_data(context: AssetExecutionContext):
     """
@@ -72,7 +73,7 @@ def nhl_game_data(context: AssetExecutionContext):
 @asset(
     partitions_def=nhl_season_partition,
     io_manager_key="nhl_season_partitioned_bigquery_io_manager",
-    group_name="nhl",
+    group_name="nhl_ingest",
     compute_kind="Python",
     auto_materialize_policy=AutoMaterializePolicy.eager(),
     backfill_policy=BackfillPolicy.single_run(),
